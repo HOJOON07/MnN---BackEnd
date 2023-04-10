@@ -12,7 +12,24 @@
     <ul class="workspace">
       <% if (allWS.length > 0) { %>
       <% for(let i=0; i < allWS.length; i++) { %>
-      <li><a href="/workspace/<%=allWS[i]._id%>"><%=allWS[i].name%></a></li>
+      <li>워크스페이스 이름 : <%=allWS[i].workspace_name%></li>
+      <li>워크스페이스 카테고리 : <%=allWS[i].workspace_category%></li>
+      <li>워크스페이스 깃허브 : <%=allWS[i].githubRepository%></li>
+      <li>워크스페이스 멤버
+        <ul>
+          <% for(let j=0; j < allWS[i].member.length; j++) { %>
+            <li><%=allWS[i].member[j]%></li>
+          <% } %>
+        </ul>
+      </li>
+      <li>워크스페이스 날짜
+        <ul>
+          <li>시작일 : <%=allWS[i].workspace_startDate%></li>
+          <li>종료일 : <%=allWS[i].workspace_endDate%></li>
+        </ul>
+      </li>
+      <li><a href="/workspace/<%=allWS[i]._id%>">워크플로우 만들기 이동</a></li>
+      <hr/>
       <br/>
       <br/>
       <% } %>
@@ -23,8 +40,35 @@
   </div>
   <form action="/workspace/addws" method="POST" class="board_form">
     <div class="form_workspace-name">
-      <h3>워크 스페이스 이름</h3>
-      <input type="text" name="name" />
+      <h3>워크 스페이스 정보</h3>
+      이름 : <input type="text" name="workspace_name" />
+      <br/>
+      카테고리 : <input type="text" name="workspace_category" />
+      <br/>
+      깃허브 주소: <input type="text" name="githubRepository" />
+      <br/>
+      <br/>
+      <div class="workspace_member">멤버
+        <div class="workspace_member_input">
+          ID: <input type="text" name="member" />
+          <br/>
+          ID: <input type="text" name="member" />
+          <br/>
+          ID: <input type="text" name="member" />
+          <br/>
+          ID: <input type="text" name="member" />
+          <br/>
+        </div>
+      </div>
+      <br/>
+      <div>
+        날짜
+        <br/>
+        시작일: <input type="date" name="workspace_startDate" />
+        <br/>
+        종료일: <input type="date" name="workspace_endDate" />
+        <br/>
+      </div>
     </div>
     <button type="submit">워크스페이스 생성</button>
   </form>

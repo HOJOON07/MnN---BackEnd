@@ -4,15 +4,28 @@ const { Schema } = mongoose;
 
 const workSpaceSchema = new Schema(
   {
-    name: {
+    workspace_name: {
       type: String,
       require: true,
     },
-    workflow: {
+    workspace_category: {
+      type: String,
+      require: true,
+    },
+    workspace_startDate: {
+      type: Date,
+    },
+    workspace_endDate: {
+      type: Date,
+    },
+    githubRepository: {
+      type: String,
+    },
+    member: {
       type: Object,
       require: true,
     },
-    member: {
+    workflow: {
       type: Object,
       require: true,
     },
