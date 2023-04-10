@@ -16,7 +16,6 @@ const userSchema = new Schema(
       type: String,
       required: true,
       minLength: 8,
-      maxLength: 14,
       unique: true,
       trim: true,
     },
@@ -29,7 +28,7 @@ const userSchema = new Schema(
       type: String,
       required: true,
       unique: true,
-      match: /.+\@.+@..+/,
+      // match: /.+\@.+@..+/,
       trim: true,
     },
     tel: {

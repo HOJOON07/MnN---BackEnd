@@ -1,5 +1,6 @@
 require('./mongoConnect');
-
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 
 //회원가입 컨트롤러
@@ -8,9 +9,10 @@ const signUpUser = async (req, res) => {
     const findUser = await User.findOne({ user_id: req.body.user_id });
     const { user_id, user_password, user_name, user_email, tel } = req.body;
     if (!findUser) {
+      const hashedPassword = await bcrypt.hash(user_password, 10);
       await User.create({
         user_id,
-        user_password,
+        user_password: hashedPassword,
         user_name,
         user_email,
         tel,
@@ -47,23 +49,24 @@ const addUserInfo = async (req, res) => {
     res.status(500).json('입력된 정보를 다시 확인해주세요.');
     console.log(err);
   }
-  // await dataBase.updateOne(
-  //   { name: '김정혁' },
-  //   { $set: { name: '홍성범', age: 32 } },
-  // );
 };
 //로그인 컨트롤러
 
 const loginUser = async (req, res) => {
   try {
     const findUser = await User.findOne({ user_id: req.body.user_id });
-    if (!findUser)
-      return res.status(400).json('아이디와 비밀번호를 잘못 입력했습니다.');
-    if (findUser.user_password !== req.body.user_password)
-      return res.status(400).json('비밀번호를 잘못 입력했습니다.');
-    res.redirect('/');
-
-    res.status(200).json('동일한 ID를 가진 회원이 존재합니다.');
+    const match = await bcrypt.compare(
+      req.body.user_password,
+      findUser.user_password,
+    );
+    if (!findUser) return res.status(400).json('아이디를 잘못 입력했습니다.'); //회원 정보에서 유저 아이디가 없는 경우
+    if (!match) return res.status(400).json('비밀번호를 잘못 입력했습니다.'); // body의 비밀번호와 회원정보 비밀번호가 일치하지 않는 경우
+    if (findUser && match) {
+      const token = jwt.sign({ user_id: findUser.user_id }, 'secret_key', {
+        expiresIn: '24h',
+      });
+      res.status(200).send({ token }); //유저아이디가 있고 비밀번호가 일치할 때
+    }
   } catch (err) {
     res.status(400);
     console.log(err);
