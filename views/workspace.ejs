@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <div class="workspace_body">
+    <h2>워크스페이스 리스트</h2>
+    <ul class="workspace">
+      <% if (allWS.length > 0) { %>
+      <% for(let i=0; i < allWS.length; i++) { %>
+      <li><a href="/workspace/<%=allWS[i]._id%>"><%=allWS[i].name%></a></li>
+      <br/>
+      <br/>
+      <% } %>
+      <% } else { %>
+        <div class="title">생성된 워크스페이스가 없습니다!</div>
+        <% } %>
+    </ul>
+  </div>
+  <form action="/workspace/addws" method="POST" class="board_form">
+    <div class="form_workspace-name">
+      <h3>워크 스페이스 이름</h3>
+      <input type="text" name="name" />
+    </div>
+    <button type="submit">워크스페이스 생성</button>
+  </form>
+  
+</body>
+</html>
