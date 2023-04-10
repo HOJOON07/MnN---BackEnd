@@ -6,9 +6,13 @@ const workspace = require('../models/workspace');
 const createWS = async (req, res) => {
   try {
     await WorkSpace.create({
-      name: req.body.name,
+      workspace_name: req.body.workspace_name,
+      workspace_category: req.body.workspace_category,
+      workspace_startDate: req.body.workspace_startDate,
+      workspace_endDate: req.body.workspace_endDate,
+      githubRepository: req.body.githubRepository,
+      member: req.body.member,
       workflow: [],
-      member: [],
     });
     res.redirect('/workspace');
   } catch (err) {
@@ -56,6 +60,8 @@ const createWF = async (req, res) => {
             ...selectWS.workflow,
             {
               name: req.body.workflow_name,
+              startDate: req.body.workflow_startDate,
+              endDate: req.body.workflow_endDate,
             },
           ],
         },
