@@ -63,7 +63,8 @@ const loginUser = async (req, res) => {
     if (!match) return res.status(400).json('비밀번호를 잘못 입력했습니다.'); // body의 비밀번호와 회원정보 비밀번호가 일치하지 않는 경우
     if (findUser && match) {
       const token = jwt.sign({ user_id: findUser.user_id }, 'secret_key', {
-        expiresIn: '24h',
+        issuer: 'server', //발행자
+        expiresIn: '24h', // 유효기간
       });
       res.status(200).send({ token }); //유저아이디가 있고 비밀번호가 일치할 때
     }
