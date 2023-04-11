@@ -15,59 +15,108 @@
       <h2 class="workspace_workflow">
         워크플로우 
       </h2>
-      <ul class="workflow_list">
-        <% if (selectWS.workflow.length > 0) { %>
-        <% for(let i=0; i < selectWS.workflow.length; i++) { %>
-        <h3>워크플로우 정보</h3>
-        <ul>
-          <li>워크플로우 이름 : <%=selectWS.workflow[i].name%></a></li>
-          <li>워크플로우 시작일 : <%=selectWS.workflow[i].startDate%></a></li>
-          <li>워크플로우 종료일 : <%=selectWS.workflow[i].endDate%></a></li>
-          <br/>
-          <br/>
+      <div>
+        <h3>TodoList</h3>
+        <ul class="workflow_todolist">
+          <% if (selectWS.workflow.todoList.length > 0) { %>
+          <% for(let i=0; i < selectWS.workflow.todoList.length; i++) { %>
+          <h3>todoList<%=i%></h3>
+          <ul>
+            <li>todoList 내용 : <%=selectWS.workflow.todoList[i].content%></li>
+            <li>todoList 생성일 : <%=selectWS.workflow.todoList[i].createDate%></li>
+            <li>todoList 마감일 : <%=selectWS.workflow.todoList[i].endDate%></li>
+            <li>todoList 중요도 : <%=selectWS.workflow.todoList[i].importance%></li>
+          </ul>
+          <% } %>
         </ul>
+        <% } else { %>
+          <div class="no">todo가 없습니다.</div>
         <% } %>
-      </ul>
-      <% } else { %>
-        <div class="no">생성된 워크플로우가 없습니다.</div>
-      <% } %>
+        <hr/>
+      </div>
+      <div>
+        <h3>InprogressList</h3>
+        <ul class="workflow_inprogresslist">
+          <% if (selectWS.workflow.inprogressList.length > 0) { %>
+          <% for(let i=0; i < selectWS.workflow.inprogressList.length; i++) { %>
+          <h3>inprogressList<%=i%></h3>
+          <ul>
+            <li>inprogressList 내용 : <%=selectWS.workflow.inprogressList[i].content%></li>
+            <li>inprogressList 생성일 : <%=selectWS.workflow.inprogressList[i].createDate%></li>
+            <li>inprogressList 마감일 : <%=selectWS.workflow.inprogressList[i].endDate%></li>
+            <li>inprogressList 중요도 : <%=selectWS.workflow.inprogressList[i].importance%></li>
+          </ul>
+          <% } %>
+        </ul>
+        <% } else { %>
+          <div class="no">inprogressList가 없습니다.</div>
+        <% } %>
+        <hr/>
+      </div>
+      <div>
+        <h3>DoneList</h3>
+        <ul class="workflow_donelist">
+          <% if (selectWS.workflow.doneList.length > 0) { %>
+          <% for(let i=0; i < selectWS.workflow.doneList.length; i++) { %>
+          <h3>doneList<%=i%></h3>
+          <ul>
+            <li>doneList 내용 : <%=selectWS.workflow.doneList[i].content%></li>
+            <li>doneList 생성일 : <%=selectWS.workflow.doneList[i].createDate%></li>
+            <li>doneList 마감일 : <%=selectWS.workflow.doneList[i].endDate%></li>
+            <li>doneList 중요도 : <%=selectWS.workflow.doneList[i].importance%></li>
+          </ul>
+          <% } %>
+        </ul>
+        <% } else { %>
+          <div class="no">doneList가 없습니다.</div>
+        <% } %>
+        <hr/>
+      </div>
     </div>
-    <hr/>
-    <div>
-      <h2 class="workspace_member">
-        멤버
-      </h2>
-      <ul class="member_list">
-        <% if (selectWS.member.length > 0) { %>
-        <% for(let i=0; i < selectWS.member.length; i++) { %>
-        <li><%=selectWS.member[i]%></a></li>
-        <br/>
-        <br/>
-        <% } %>
-      </ul>
-      <% } else { %>
-        <div class="no">추가된 유저가 없습니다.</div>
-      <% } %>
+    <div class="test">
     </div>
   </div>
-  <form action="/workspace/<%=selectWS._id%>/addwf" method="POST" class="board_form">
+  <form action="/workspace/<%=selectWS._id%>/addtodolist" method="POST" class="board_form">
     <div class="form_workflow-name">
-      <h3>워크 플로우</h3>
-      이름 : <input type="text" name="workflow_name" required></input>
-      <br>
-      시작일 : <input type="date" name="workflow_startDate" required></input>
-      <br>
-      종료일 : <input type="date" name="workflow_endDate" required></input>
+      <h3>Todo List 추가</h3>
+      내용 : <input type="text" name="todoList_content" required></input>
+      <br/>
+      종료일 : <input type="date" name="todoList_endDate" required></input>
+      <br/>
+      중요도 : <input type="text" name="todoList_importance" required></input>
     </div>
-    <button type="submit">워크플로우 생성</button>
+    <button type="submit">Todo 추가</button>
   </form>
-  <form action="/workspace/<%=selectWS._id%>/addmember" method="POST" class="board_form">
+  <form action="/workspace/<%=selectWS._id%>/addinprogresslist" method="POST" class="board_form">
     <div class="form_workflow-name">
-      <h3>유저 ID</h3>
-      <input type="text" name="member" required></input>
+      <h3>Inprogress List 추가</h3>
+      내용 : <input type="text" name="inprogressList_content" required></input>
+      <br>
+      종료일 : <input type="date" name="inprogressList_endDate" required></input>
+      <br/>
+      중요도 : <input type="text" name="inprogressList_importance" required></input>
     </div>
-    <button type="submit">멤버 추가</button>
+    <button type="submit">Inprogress 추가</button>
   </form>
-  
+  <form action="/workspace/<%=selectWS._id%>/adddonelist" method="POST" class="board_form">
+    <div class="form_workflow-name">
+      <h3>Done List 추가</h3>
+      이름 : <input type="text" name="doneList_content" required></input>
+      <br>
+      종료일 : <input type="date" name="doneList_endDate" required></input>
+      <br/>
+      중요도 : <input type="text" name="doneList_importance" required></input>
+    </div>
+    <button type="submit">Done 추가</button>
+  </form>
+
 </body>
 </html>
+
+<script defer>
+  const test = document.querySelectorAll('.draglist');
+  const object = [test];
+  console.log(object);
+  const objectobeject = object;
+  console.log(objectobeject);
+</script>
