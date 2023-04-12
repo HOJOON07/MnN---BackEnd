@@ -12,6 +12,9 @@
     <ul class="workspace">
       <% if (allWS.length > 0) { %>
       <% for(let i=0; i < allWS.length; i++) { %>
+      <li>워크스페이스<button onclick="deleteWS('<%=allWS[i]._id%>')">삭제</button></li>
+      <ul>
+      <li>워크스페이스 _id : <%=allWS[i]._id%></li>
       <li>워크스페이스 이름 : <%=allWS[i].workspace_name%></li>
       <li>워크스페이스 카테고리 : <%=allWS[i].workspace_category%></li>
       <li>워크스페이스 깃허브 : <%=allWS[i].githubRepository%></li>
@@ -29,9 +32,8 @@
         </ul>
       </li>
       <li><a href="/workspace/<%=allWS[i]._id%>">워크플로우 만들기 이동</a></li>
+    </ul>
       <hr/>
-      <br/>
-      <br/>
       <% } %>
       <% } else { %>
         <div class="title">생성된 워크스페이스가 없습니다!</div>
@@ -75,3 +77,18 @@
   
 </body>
 </html>
+
+<script defer>
+  const deleteWS = async(id) => {
+    try{
+      const res = await fetch(`http://localhost:8001/workspace/${id}/deletews`,{
+        method: 'POST',
+        headers: {
+      'Content-type': 'application/json',},
+      })
+      if(res.status ===200) location.reload();
+    }catch(err){
+      console.log(err);
+    }
+  }
+</script>
