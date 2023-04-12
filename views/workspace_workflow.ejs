@@ -20,8 +20,9 @@
         <ul class="workflow_todolist">
           <% if (selectWS.workflow.todoList.length > 0) { %>
           <% for(let i=0; i < selectWS.workflow.todoList.length; i++) { %>
-          <h3>todoList<%=i%></h3>
+          <h3>todoList <%=i%><button onclick="deletetodolist('<%=selectWS._id%>','<%=selectWS.workflow.todoList[i].id%>')">삭제</button></h3>
           <ul>
+            <li>todoList id : <%=selectWS.workflow.todoList[i].id%></li>
             <li>todoList 내용 : <%=selectWS.workflow.todoList[i].content%></li>
             <li>todoList 생성일 : <%=selectWS.workflow.todoList[i].createDate%></li>
             <li>todoList 마감일 : <%=selectWS.workflow.todoList[i].endDate%></li>
@@ -39,7 +40,7 @@
         <ul class="workflow_inprogresslist">
           <% if (selectWS.workflow.inprogressList.length > 0) { %>
           <% for(let i=0; i < selectWS.workflow.inprogressList.length; i++) { %>
-          <h3>inprogressList<%=i%></h3>
+          <h3>inprogressList<%=i%><button onclick="deleteinprogresslist('<%=selectWS._id%>','<%=selectWS.workflow.inprogressList[i].id%>')">삭제</button></h3>
           <ul>
             <li>inprogressList 내용 : <%=selectWS.workflow.inprogressList[i].content%></li>
             <li>inprogressList 생성일 : <%=selectWS.workflow.inprogressList[i].createDate%></li>
@@ -58,7 +59,7 @@
         <ul class="workflow_donelist">
           <% if (selectWS.workflow.doneList.length > 0) { %>
           <% for(let i=0; i < selectWS.workflow.doneList.length; i++) { %>
-          <h3>doneList<%=i%></h3>
+          <h3>doneList<%=i%><button onclick="deletedonelist('<%=selectWS._id%>','<%=selectWS.workflow.doneList[i].id%>')">삭제</button></h3>
           <ul>
             <li>doneList 내용 : <%=selectWS.workflow.doneList[i].content%></li>
             <li>doneList 생성일 : <%=selectWS.workflow.doneList[i].createDate%></li>
@@ -114,9 +115,40 @@
 </html>
 
 <script defer>
-  const test = document.querySelectorAll('.draglist');
-  const object = [test];
-  console.log(object);
-  const objectobeject = object;
-  console.log(objectobeject);
+  const deletetodolist = async(id, todoId) => {
+    try{
+      const res = await fetch(`http://localhost:8001/workspace/${id}/${todoId}/deletetodolist`,{
+        method: 'POST',
+        headers: {
+      'Content-type': 'application/json',},
+      })
+      if(res.status ===200) location.reload();
+    }catch(err) {
+      console.log(err);
+    }
+  }
+  const deleteinprogresslist = async(id, inprogressId) => {
+    try{
+      const res = await fetch(`http://localhost:8001/workspace/${id}/${inprogressId}/deleteinprogresslist`,{
+        method: 'POST',
+        headers: {
+      'Content-type': 'application/json',},
+      })
+      if(res.status ===200) location.reload();
+    }catch(err) {
+      console.log(err);
+    }
+  }
+  const deletedonelist = async(id, doneId) => {
+    try{
+      const res = await fetch(`http://localhost:8001/workspace/${id}/${doneId}/deletedonelist`,{
+        method: 'POST',
+        headers: {
+      'Content-type': 'application/json',},
+      })
+      if(res.status ===200) location.reload();
+    }catch(err) {
+      console.log(err);
+    }
+  }
 </script>

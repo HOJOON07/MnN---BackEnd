@@ -1,8 +1,8 @@
 const mongoConnect = require('./mongoConnect');
 const { ObjectId } = require('mongodb');
 const WorkSpace = require('../models/workspace');
-const workspace = require('../models/workspace');
 
+// workspace
 const createWS = async (req, res) => {
   try {
     await WorkSpace.create({
@@ -32,6 +32,7 @@ const inviteUser = async (req, res) => {
       },
       { $set: { member: [...selectWS.member, req.body.member] } },
     );
+
     res.redirect('/workspace/' + req.params.id);
   } catch (err) {
     console.error(err);
@@ -65,35 +66,20 @@ const selectWS = async (req, res) => {
   }
 };
 
-const createWF = async (req, res) => {
+const deleteWS = async (req, res) => {
   try {
-    const selectWS = await WorkSpace.findOne({
+    const deleteWS = await WorkSpace.deleteOne({
       _id: ObjectId(req.params.id),
     });
-    await WorkSpace.updateOne(
-      {
-        _id: ObjectId(req.params.id),
-      },
-      {
-        $set: {
-          workflow: [
-            ...selectWS.workflow,
-            {
-              name: req.body.workflow_name,
-              createDate: new Date(),
-              endDate: req.body.workflow_endDate,
-            },
-          ],
-        },
-      },
-    );
-    res.redirect('/workspace/' + req.params.id);
+    res.redirect('/');
   } catch (err) {
     console.error(err);
     res.status(500).send(err.message);
   }
 };
 
+// workspace-workflow
+//todoList
 const addTodoList = async (req, res) => {
   try {
     const selectWS = await WorkSpace.findOne({
@@ -109,6 +95,7 @@ const addTodoList = async (req, res) => {
             todoList: [
               ...selectWS.workflow.todoList,
               {
+                id: String(new ObjectId()),
                 content: req.body.todoList_content,
                 createDate: new Date(),
                 endDate: req.body.todoList_endDate,
@@ -127,7 +114,36 @@ const addTodoList = async (req, res) => {
     res.status(500).send(err.message);
   }
 };
+const deleteTodoList = async (req, res) => {
+  try {
+    const selectWS = await WorkSpace.findOne({
+      _id: ObjectId(req.params.id),
+    });
+    const modifyWS = selectWS.workflow.todoList.filter(
+      (data) => data.id != req.params.todoid,
+    );
+    console.log(modifyWS);
+    await WorkSpace.updateOne(
+      {
+        _id: ObjectId(req.params.id),
+      },
+      {
+        $set: {
+          workflow: {
+            todoList: [...modifyWS],
+            inprogressList: [...selectWS.workflow.inprogressList],
+            doneList: [...selectWS.workflow.doneList],
+          },
+        },
+      },
+    );
+    res.redirect('/workspace/' + req.params.id);
+  } catch (err) {
+    console.error(err);
+  }
+};
 
+//inprogressList
 const addInprogressList = async (req, res) => {
   try {
     const selectWS = await WorkSpace.findOne({
@@ -144,6 +160,7 @@ const addInprogressList = async (req, res) => {
             inprogressList: [
               ...selectWS.workflow.inprogressList,
               {
+                id: String(new ObjectId()),
                 content: req.body.inprogressList_content,
                 createDate: new Date(),
                 endDate: req.body.inprogressList_endDate,
@@ -162,6 +179,36 @@ const addInprogressList = async (req, res) => {
   }
 };
 
+const deleteInprogressList = async (req, res) => {
+  try {
+    const selectWS = await WorkSpace.findOne({
+      _id: ObjectId(req.params.id),
+    });
+    const modifyWS = selectWS.workflow.inprogressList.filter(
+      (data) => data.id != req.params.inprogressid,
+    );
+    console.log(modifyWS);
+    await WorkSpace.updateOne(
+      {
+        _id: ObjectId(req.params.id),
+      },
+      {
+        $set: {
+          workflow: {
+            todoList: [...selectWS.workflow.todoList],
+            inprogressList: [...modifyWS],
+            doneList: [...selectWS.workflow.doneList],
+          },
+        },
+      },
+    );
+    res.redirect('/workspace/' + req.params.id);
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+//doneList
 const addDoneList = async (req, res) => {
   try {
     const selectWS = await WorkSpace.findOne({
@@ -179,6 +226,7 @@ const addDoneList = async (req, res) => {
             doneList: [
               ...selectWS.workflow.doneList,
               {
+                id: String(new ObjectId()),
                 content: req.body.doneList_content,
                 createDate: new Date(),
                 endDate: req.body.doneList_endDate,
@@ -189,20 +237,51 @@ const addDoneList = async (req, res) => {
         },
       },
     );
+
     res.redirect('/workspace/' + req.params.id);
   } catch (err) {
     console.error(err);
     res.status(500).send(err.message);
   }
 };
-
+const deleteDoneList = async (req, res) => {
+  try {
+    const selectWS = await WorkSpace.findOne({
+      _id: ObjectId(req.params.id),
+    });
+    const modifyWS = selectWS.workflow.doneList.filter(
+      (data) => data.id != req.params.doneid,
+    );
+    console.log(modifyWS);
+    await WorkSpace.updateOne(
+      {
+        _id: ObjectId(req.params.id),
+      },
+      {
+        $set: {
+          workflow: {
+            todoList: [...selectWS.workflow.todoList],
+            inprogressList: [...selectWS.workflow.inprogressList],
+            doneList: [...modifyWS],
+          },
+        },
+      },
+    );
+    res.redirect('/workspace/' + req.params.id);
+  } catch (err) {
+    console.error(err);
+  }
+};
 module.exports = {
   createWS,
   getAllWS,
   selectWS,
-  createWF,
+  deleteWS,
   inviteUser,
   addTodoList,
+  deleteTodoList,
   addInprogressList,
+  deleteInprogressList,
   addDoneList,
+  deleteDoneList,
 };
