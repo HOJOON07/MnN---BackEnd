@@ -198,11 +198,11 @@ const addInProgressList = async (req, res) => {
             inProgressList: [
               ...selectWS.workflow.inProgressList,
               {
-                id: new ObjectId(),
-                content: req.body.inprogressList_content,
+                id: String(new ObjectId()),
+                content: req.body.inProgressList_content,
                 createDate: new Date(),
-                endDate: req.body.inprogressList_endDate,
-                importance: req.body.inprogressList_importance,
+                endDate: req.body.inProgressList_endDate,
+                importance: req.body.inProgressList_importance,
               },
             ],
             inReviewList: [...selectWS.workflow.inReviewList],
@@ -262,7 +262,7 @@ const deleteInProgressList = async (req, res) => {
         $set: {
           workflow: {
             requestList: [...selectWS.workflow.requestList],
-            inProgressList: [remainInProgressList],
+            inProgressList: [...remainInProgressList],
             inReviewList: [...selectWS.workflow.inReviewList],
             blockedList: [...selectWS.workflow.blockedList],
             completedList: [...selectWS.workflow.completedList],
@@ -295,10 +295,10 @@ const addInReviewList = async (req, res) => {
               ...selectWS.workflow.inReviewList,
               {
                 id: String(new ObjectId()),
-                content: req.body.request_content,
+                content: req.body.inReviewList_content,
                 createDate: new Date(),
-                endDate: req.body.requestList_endDate,
-                importance: req.body.requestList_importance,
+                endDate: req.body.inReviewList_endDate,
+                importance: req.body.inReviewList_importance,
               },
             ],
             blockedList: [...selectWS.workflow.blockedList],
@@ -510,7 +510,7 @@ const updateCompletedList = async (req, res) => {
     const modifyCompletedIndex = selectWS.workflow.completedList.findIndex(
       (data) => data.id == req.params.completedid,
     );
-    selectWS.workflow.blockedList[modifyCompletedIndex].content =
+    selectWS.workflow.completedList[modifyCompletedIndex].content =
       req.body.modifyContent;
     await WorkSpace.updateOne(
       {
