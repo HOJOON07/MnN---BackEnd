@@ -16,24 +16,23 @@
         워크플로우 
       </h2>
       <div>
-        <h3>TodoList</h3>
-        <ul class="workflow_todolist">
-          <% if (selectWS.workflow.todoList.length > 0) { %>
-          <% for(let i=0; i < selectWS.workflow.todoList.length; i++) { %>
-          <h3>todoList <%=i%>
-            
-            <button onclick="deletetodolist('<%=selectWS._id%>','<%=selectWS.workflow.todoList[i].id%>')">삭제</button></h3>
+        <h3>RequestList</h3>
+        <ul class="workflow_requestlist">
+          <% if (selectWS.workflow.requestList.length > 0) { %>
+          <% for(let i=0; i < selectWS.workflow.requestList.length; i++) { %>
+          <h3>requestList <%=i%>
+            <button onclick="deleteRequestList('<%=selectWS._id%>','<%=selectWS.workflow.requestList[i].id%>')">삭제</button></h3>
           <ul>
-            <li>todoList id : <%=selectWS.workflow.todoList[i].id%></li>
-            <li class="todoList_content">todoList 내용 : <%=selectWS.workflow.todoList[i].content%>
-              <form action="/workspace/<%=selectWS._id%>/<%=selectWS.workflow.todoList[i].id%>/updatetodolist" method="POST" class="board_form">
+            <li>requestList id : <%=selectWS.workflow.requestList[i].id%></li>
+            <li class="todoList_content">requestList 내용 : <%=selectWS.workflow.requestList[i].content%>
+              <form action="/workspace/<%=selectWS._id%>/<%=selectWS.workflow.requestList[i].id%>/updaterequestlist" method="POST" class="board_form">
                 <input name="modifyContent"></input>
                 <button type="submit">수정하기</button>
               </form>
             </li>
-            <li>todoList 생성일 : <%=selectWS.workflow.todoList[i].createDate%></li>
-            <li>todoList 마감일 : <%=selectWS.workflow.todoList[i].endDate%></li>
-            <li>todoList 중요도 : <%=selectWS.workflow.todoList[i].importance%></li>
+            <li>requestList 생성일 : <%=selectWS.workflow.requestList[i].createDate%></li>
+            <li>requestList 마감일 : <%=selectWS.workflow.requestList[i].endDate%></li>
+            <li>requestList 중요도 : <%=selectWS.workflow.requestList[i].importance%></li>
           </ul>
           <% } %>
         </ul>
@@ -43,89 +42,52 @@
         <hr/>
       </div>
       <div>
-        <h3>InprogressList</h3>
+        <h3>InProgressList</h3>
         <ul class="workflow_inprogresslist">
-          <% if (selectWS.workflow.inprogressList.length > 0) { %>
-          <% for(let i=0; i < selectWS.workflow.inprogressList.length; i++) { %>
-          <h3>inprogressList<%=i%><button onclick="deleteinprogresslist('<%=selectWS._id%>','<%=selectWS.workflow.inprogressList[i].id%>')">삭제</button></h3>
+          <% if (selectWS.workflow.inProgressList.length > 0) { %>
+          <% for(let i=0; i < selectWS.workflow.inProgressList.length; i++) { %>
+          <h3>inProgressList<%=i%><button onclick="deleteinprogresslist('<%=selectWS._id%>','<%=selectWS.workflow.inProgressList[i].id%>')">삭제</button></h3>
           <ul>
-            <li>inprogressList 내용 : <%=selectWS.workflow.inprogressList[i].content%>
-              <form action="/workspace/<%=selectWS._id%>/<%=selectWS.workflow.inprogressList[i].id%>/updateinprogresslist" method="POST" class="board_form">
+            <li>inProgressList 내용 : <%=selectWS.workflow.inProgressList[i].content%>
+              <form action="/workspace/<%=selectWS._id%>/<%=selectWS.workflow.inProgressList[i].id%>/updateinprogresslist" method="POST" class="board_form">
               <input name="modifyContent"></input>
               <button type="submit">수정하기</button>
               </form>
             </li>
-            <li>inprogressList 생성일 : <%=selectWS.workflow.inprogressList[i].createDate%></li>
-            <li>inprogressList 마감일 : <%=selectWS.workflow.inprogressList[i].endDate%></li>
-            <li>inprogressList 중요도 : <%=selectWS.workflow.inprogressList[i].importance%></li>
+            <li>inProgressList 생성일 : <%=selectWS.workflow.inProgressList[i].createDate%></li>
+            <li>inProgressList 마감일 : <%=selectWS.workflow.inProgressList[i].endDate%></li>
+            <li>inProgressList 중요도 : <%=selectWS.workflow.inProgressList[i].importance%></li>
           </ul>
           <% } %>
         </ul>
         <% } else { %>
-          <div class="no">inprogressList가 없습니다.</div>
+          <div class="no">inProgressList가 없습니다.</div>
         <% } %>
         <hr/>
       </div>
-      <div>
-        <h3>DoneList</h3>
-        <ul class="workflow_donelist">
-          <% if (selectWS.workflow.doneList.length > 0) { %>
-          <% for(let i=0; i < selectWS.workflow.doneList.length; i++) { %>
-          <h3>doneList<%=i%><button onclick="deletedonelist('<%=selectWS._id%>','<%=selectWS.workflow.doneList[i].id%>')">삭제</button></h3>
-          <ul>
-            <li>doneList 내용 : <%=selectWS.workflow.doneList[i].content%>
-              <form action="/workspace/<%=selectWS._id%>/<%=selectWS.workflow.doneList[i].id%>/updatedonelist" method="POST" class="board_form">
-              <input name="modifyContent"></input>
-              <button type="submit">수정하기</button>
-              </form>
-            </li>
-            <li>doneList 생성일 : <%=selectWS.workflow.doneList[i].createDate%></li>
-            <li>doneList 마감일 : <%=selectWS.workflow.doneList[i].endDate%></li>
-            <li>doneList 중요도 : <%=selectWS.workflow.doneList[i].importance%></li>
-          </ul>
-          <% } %>
-        </ul>
-        <% } else { %>
-          <div class="no">doneList가 없습니다.</div>
-        <% } %>
-        <hr/>
-      </div>
-    </div>
-    <div class="test">
     </div>
   </div>
-  <form action="/workspace/<%=selectWS._id%>/addtodolist" method="POST" class="board_form">
+  <form action="/workspace/<%=selectWS._id%>/addrequestlist" method="POST" class="board_form">
     <div class="form_workflow-name">
-      <h3>Todo List 추가</h3>
-      내용 : <input type="text" name="todoList_content" required></input>
+      <h3>RequestList 추가</h3>
+      내용 : <input type="text" name="requestList_content" required></input>
       <br/>
-      종료일 : <input type="date" name="todoList_endDate" required></input>
+      종료일 : <input type="date" name="requestList_endDate" required></input>
       <br/>
-      중요도 : <input type="text" name="todoList_importance" required></input>
+      중요도 : <input type="text" name="requestList_importance" required></input>
     </div>
-    <button type="submit">Todo 추가</button>
+    <button type="submit">Request 추가</button>
   </form>
   <form action="/workspace/<%=selectWS._id%>/addinprogresslist" method="POST" class="board_form">
     <div class="form_workflow-name">
-      <h3>Inprogress List 추가</h3>
+      <h3>InProgress List 추가</h3>
       내용 : <input type="text" name="inprogressList_content" required></input>
       <br>
       종료일 : <input type="date" name="inprogressList_endDate" required></input>
       <br/>
       중요도 : <input type="text" name="inprogressList_importance" required></input>
     </div>
-    <button type="submit">Inprogress 추가</button>
-  </form>
-  <form action="/workspace/<%=selectWS._id%>/adddonelist" method="POST" class="board_form">
-    <div class="form_workflow-name">
-      <h3>Done List 추가</h3>
-      이름 : <input type="text" name="doneList_content" required></input>
-      <br>
-      종료일 : <input type="date" name="doneList_endDate" required></input>
-      <br/>
-      중요도 : <input type="text" name="doneList_importance" required></input>
-    </div>
-    <button type="submit">Done 추가</button>
+    <button type="submit">InProgress 추가</button>
   </form>
 
 </body>
@@ -133,9 +95,9 @@
 
 <script defer>
 
-  const updateTodoList = async(id, todoId) => {
+  const updateRequestList = async(id, todoId) => {
     try{
-      const res = await fetch(`http://localhost:8001/workspace/${id}/${todoId}/updatetodolist`,{
+      const res = await fetch(`http://localhost:8001/workspace/${id}/${todoId}/updaterequestlist`,{
         method:'POST',
         headers:{
           'Content-type': 'application/json'
@@ -146,9 +108,9 @@
       console.log(err);
     }
   }
-  const deletetodolist = async(id, todoId) => {
+  const deleteRequestList = async(id, todoId) => {
     try{
-      const res = await fetch(`http://localhost:8001/workspace/${id}/${todoId}/deletetodolist`,{
+      const res = await fetch(`http://localhost:8001/workspace/${id}/${todoId}/deleterequestlist`,{
         method: 'POST',
         headers: {
       'Content-type': 'application/json',},

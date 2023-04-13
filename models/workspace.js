@@ -35,7 +35,7 @@ const workSpaceSchema = new Schema(
     },
   },
   {
-    collection: 'test-workspace',
+    collection: 'workspace',
     versionKey: false,
   },
 );

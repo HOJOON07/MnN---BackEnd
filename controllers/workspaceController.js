@@ -13,7 +13,13 @@ const createWS = async (req, res) => {
       workspace_endDate: req.body.workspace_endDate,
       githubRepository: req.body.githubRepository,
       member: req.body.member,
-      workflow: { todoList: [], inprogressList: [], doneList: [] },
+      workflow: {
+        requestList: [],
+        inProgressList: [],
+        inReviewList: [],
+        blockedList: [],
+        completedList: [],
+      },
     });
     res.redirect('/workspace');
   } catch (err) {
@@ -80,8 +86,8 @@ const deleteWS = async (req, res) => {
 };
 
 // workspace-workflow
-//todoList
-const addTodoList = async (req, res) => {
+//requestList
+const addRequestList = async (req, res) => {
   try {
     const selectWS = await WorkSpace.findOne({
       _id: ObjectId(req.params.id),
@@ -93,18 +99,20 @@ const addTodoList = async (req, res) => {
       {
         $set: {
           workflow: {
-            todoList: [
-              ...selectWS.workflow.todoList,
+            requestList: [
+              ...selectWS.workflow.requestList,
               {
                 id: String(new ObjectId()),
-                content: req.body.todoList_content,
+                content: req.body.requestList_content,
                 createDate: new Date(),
-                endDate: req.body.todoList_endDate,
-                importance: req.body.todoList_importance,
+                endDate: req.body.requestList_endDate,
+                importance: req.body.requestList_importance,
               },
             ],
-            inprogressList: [...selectWS.workflow.inprogressList],
-            doneList: [...selectWS.workflow.doneList],
+            inProgressList: [...selectWS.workflow.inProgressList],
+            inReviewList: [...selectWS.workflow.inReviewList],
+            blockedList: [...selectWS.workflow.blockedList],
+            completedList: [...selectWS.workflow.completedList],
           },
         },
       },
@@ -115,105 +123,15 @@ const addTodoList = async (req, res) => {
     res.status(500).send(err.message);
   }
 };
-const updateTodoList = async (req, res) => {
+const updateRequestList = async (req, res) => {
   try {
     const selectWS = await WorkSpace.findOne({
       _id: ObjectId(req.params.id),
     });
-    const modifyIndex = selectWS.workflow.todoList.findIndex(
-      (data) => data.id == req.params.todoid,
+    const modifyRequestIndex = selectWS.workflow.requestList.findIndex(
+      (data) => data.id == req.params.requestid,
     );
-    selectWS.workflow.todoList[modifyIndex].content = req.body.modifyContent;
-    await WorkSpace.updateOne(
-      {
-        _id: ObjectId(req.params.id),
-      },
-      {
-        $set: {
-          workflow: {
-            ...selectWS.workflow,
-          },
-        },
-      },
-    );
-    res.redirect('/workspace/' + req.params.id);
-  } catch (err) {
-    console.log(err);
-  }
-};
-const deleteTodoList = async (req, res) => {
-  try {
-    const selectWS = await WorkSpace.findOne({
-      _id: ObjectId(req.params.id),
-    });
-    const modifyWS = selectWS.workflow.todoList.filter(
-      (data) => data.id != req.params.todoid,
-    );
-    console.log(modifyWS);
-    await WorkSpace.updateOne(
-      {
-        _id: ObjectId(req.params.id),
-      },
-      {
-        $set: {
-          workflow: {
-            todoList: [...modifyWS],
-            inprogressList: [...selectWS.workflow.inprogressList],
-            doneList: [...selectWS.workflow.doneList],
-          },
-        },
-      },
-    );
-    res.redirect('/workspace/' + req.params.id);
-  } catch (err) {
-    console.error(err);
-  }
-};
-
-//inprogressList
-const addInprogressList = async (req, res) => {
-  try {
-    const selectWS = await WorkSpace.findOne({
-      _id: ObjectId(req.params.id),
-    });
-    await WorkSpace.updateOne(
-      {
-        _id: ObjectId(req.params.id),
-      },
-      {
-        $set: {
-          workflow: {
-            todoList: [...selectWS.workflow.todoList],
-            inprogressList: [
-              ...selectWS.workflow.inprogressList,
-              {
-                id: String(new ObjectId()),
-                content: req.body.inprogressList_content,
-                createDate: new Date(),
-                endDate: req.body.inprogressList_endDate,
-                importance: req.body.inprogressList_importance,
-              },
-            ],
-            doneList: [...selectWS.workflow.doneList],
-          },
-        },
-      },
-    );
-    res.redirect('/workspace/' + req.params.id);
-  } catch (err) {
-    console.error(err);
-    res.status(500).send(err.message);
-  }
-};
-const updateInprogressList = async (req, res) => {
-  try {
-    const selectWS = await WorkSpace.findOne({
-      _id: ObjectId(req.params.id),
-    });
-    const modifyIndex = selectWS.workflow.inprogressList.findIndex(
-      (data) => data.id == req.params.inprogressid,
-    );
-    selectWS.workflow.inprogressList[modifyIndex].content =
+    selectWS.workflow.requestList[modifyRequestIndex].content =
       req.body.modifyContent;
     await WorkSpace.updateOne(
       {
@@ -232,15 +150,15 @@ const updateInprogressList = async (req, res) => {
     console.log(err);
   }
 };
-const deleteInprogressList = async (req, res) => {
+const deleteRequestList = async (req, res) => {
   try {
     const selectWS = await WorkSpace.findOne({
       _id: ObjectId(req.params.id),
     });
-    const modifyWS = selectWS.workflow.inprogressList.filter(
-      (data) => data.id != req.params.inprogressid,
+    const remainRequestList = selectWS.workflow.requestList.filter(
+      (data) => data.id != req.params.requestid,
     );
-    console.log(modifyWS);
+    console.log(remainRequestList);
     await WorkSpace.updateOne(
       {
         _id: ObjectId(req.params.id),
@@ -248,9 +166,11 @@ const deleteInprogressList = async (req, res) => {
       {
         $set: {
           workflow: {
-            todoList: [...selectWS.workflow.todoList],
-            inprogressList: [...modifyWS],
-            doneList: [...selectWS.workflow.doneList],
+            requestList: [...remainRequestList],
+            inProgressList: [...selectWS.workflow.inProgressList],
+            inReviewList: [...selectWS.workflow.inReviewList],
+            blockedList: [...selectWS.workflow.blockedList],
+            completedList: [...selectWS.workflow.completedList],
           },
         },
       },
@@ -261,8 +181,8 @@ const deleteInprogressList = async (req, res) => {
   }
 };
 
-//doneList
-const addDoneList = async (req, res) => {
+//inprogressList
+const addInProgressList = async (req, res) => {
   try {
     const selectWS = await WorkSpace.findOne({
       _id: ObjectId(req.params.id),
@@ -274,38 +194,40 @@ const addDoneList = async (req, res) => {
       {
         $set: {
           workflow: {
-            todoList: [...selectWS.workflow.todoList],
-            inprogressList: [...selectWS.workflow.inprogressList],
-            doneList: [
-              ...selectWS.workflow.doneList,
+            requestList: [...selectWS.workflow.requestList],
+            inProgressList: [
+              ...selectWS.workflow.inProgressList,
               {
-                id: String(new ObjectId()),
-                content: req.body.doneList_content,
+                id: new ObjectId(),
+                content: req.body.inprogressList_content,
                 createDate: new Date(),
-                endDate: req.body.doneList_endDate,
-                importance: req.body.doneList_importance,
+                endDate: req.body.inprogressList_endDate,
+                importance: req.body.inprogressList_importance,
               },
             ],
+            inReviewList: [...selectWS.workflow.inReviewList],
+            blockedList: [...selectWS.workflow.blockedList],
+            completedList: [...selectWS.workflow.completedList],
           },
         },
       },
     );
-
     res.redirect('/workspace/' + req.params.id);
   } catch (err) {
     console.error(err);
     res.status(500).send(err.message);
   }
 };
-const updateDoneList = async (req, res) => {
+const updateInProgressList = async (req, res) => {
   try {
     const selectWS = await WorkSpace.findOne({
       _id: ObjectId(req.params.id),
     });
-    const modifyIndex = selectWS.workflow.doneList.findIndex(
-      (data) => data.id == req.params.doneid,
+    const modifyInProgressIndex = selectWS.workflow.inProgressList.findIndex(
+      (data) => data.id == req.params.inprogressid,
     );
-    selectWS.workflow.doneList[modifyIndex].content = req.body.modifyContent;
+    selectWS.workflow.inProgressList[modifyInProgressIndex].content =
+      req.body.modifyContent;
     await WorkSpace.updateOne(
       {
         _id: ObjectId(req.params.id),
@@ -323,15 +245,15 @@ const updateDoneList = async (req, res) => {
     console.log(err);
   }
 };
-const deleteDoneList = async (req, res) => {
+const deleteInProgressList = async (req, res) => {
   try {
     const selectWS = await WorkSpace.findOne({
       _id: ObjectId(req.params.id),
     });
-    const modifyWS = selectWS.workflow.doneList.filter(
-      (data) => data.id != req.params.doneid,
+    const remainInProgressList = selectWS.workflow.inProgressList.filter(
+      (data) => data.id != req.params.inprogressid,
     );
-    console.log(modifyWS);
+    console.log(remainInProgressList);
     await WorkSpace.updateOne(
       {
         _id: ObjectId(req.params.id),
@@ -339,9 +261,294 @@ const deleteDoneList = async (req, res) => {
       {
         $set: {
           workflow: {
-            todoList: [...selectWS.workflow.todoList],
-            inprogressList: [...selectWS.workflow.inprogressList],
-            doneList: [...modifyWS],
+            requestList: [...selectWS.workflow.requestList],
+            inProgressList: [remainInProgressList],
+            inReviewList: [...selectWS.workflow.inReviewList],
+            blockedList: [...selectWS.workflow.blockedList],
+            completedList: [...selectWS.workflow.completedList],
+          },
+        },
+      },
+    );
+    res.redirect('/workspace/' + req.params.id);
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+//inreview list
+const addInReviewList = async (req, res) => {
+  try {
+    const selectWS = await WorkSpace.findOne({
+      _id: ObjectId(req.params.id),
+    });
+    await WorkSpace.updateOne(
+      {
+        _id: ObjectId(req.params.id),
+      },
+      {
+        $set: {
+          workflow: {
+            requestList: [...selectWS.workflow.requestList],
+            inProgressList: [...selectWS.workflow.inProgressList],
+            inReviewList: [
+              ...selectWS.workflow.inReviewList,
+              {
+                id: String(new ObjectId()),
+                content: req.body.request_content,
+                createDate: new Date(),
+                endDate: req.body.requestList_endDate,
+                importance: req.body.requestList_importance,
+              },
+            ],
+            blockedList: [...selectWS.workflow.blockedList],
+            completedList: [...selectWS.workflow.completedList],
+          },
+        },
+      },
+    );
+    res.redirect('/workspace/' + req.params.id);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send(err.message);
+  }
+};
+const updateInReviewList = async (req, res) => {
+  try {
+    const selectWS = await WorkSpace.findOne({
+      _id: ObjectId(req.params.id),
+    });
+    const modifyInReviewIndex = selectWS.workflow.inReviewList.findIndex(
+      (data) => data.id == req.params.inreviewid,
+    );
+    selectWS.workflow.inReviewList[modifyInReviewIndex].content =
+      req.body.modifyContent;
+    await WorkSpace.updateOne(
+      {
+        _id: ObjectId(req.params.id),
+      },
+      {
+        $set: {
+          workflow: {
+            ...selectWS.workflow,
+          },
+        },
+      },
+    );
+    res.redirect('/workspace/' + req.params.id);
+  } catch (err) {
+    console.log(err);
+  }
+};
+const deleteInReviewList = async (req, res) => {
+  try {
+    const selectWS = await WorkSpace.findOne({
+      _id: ObjectId(req.params.id),
+    });
+    const remainReviewList = selectWS.workflow.inReviewList.filter(
+      (data) => data.id != req.params.inreviewid,
+    );
+    console.log(remainReviewList);
+    await WorkSpace.updateOne(
+      {
+        _id: ObjectId(req.params.id),
+      },
+      {
+        $set: {
+          workflow: {
+            requestList: [...selectWS.workflow.requestList],
+            inProgressList: [...selectWS.workflow.inProgressList],
+            inReviewList: [...remainReviewList],
+            blockedList: [...selectWS.workflow.blockedList],
+            completedList: [...selectWS.workflow.completedList],
+          },
+        },
+      },
+    );
+    res.redirect('/workspace/' + req.params.id);
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+// blocked list
+const addBlockedList = async (req, res) => {
+  try {
+    const selectWS = await WorkSpace.findOne({
+      _id: ObjectId(req.params.id),
+    });
+    await WorkSpace.updateOne(
+      {
+        _id: ObjectId(req.params.id),
+      },
+      {
+        $set: {
+          workflow: {
+            requestList: [...selectWS.workflow.requestList],
+            inProgressList: [...selectWS.workflow.inProgressList],
+            inReviewList: [...selectWS.workflow.inReviewList],
+            blockedList: [
+              ...selectWS.workflow.blockedList,
+              {
+                id: String(new ObjectId()),
+                content: req.body.blockedList_content,
+                createDate: new Date(),
+                endDate: req.body.blockedList_endDate,
+                importance: req.body.blockedList_importance,
+              },
+            ],
+            completedList: [...selectWS.workflow.completedList],
+          },
+        },
+      },
+    );
+    res.redirect('/workspace/' + req.params.id);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send(err.message);
+  }
+};
+const updateBlockedList = async (req, res) => {
+  try {
+    const selectWS = await WorkSpace.findOne({
+      _id: ObjectId(req.params.id),
+    });
+    const modifyBlockedIndex = selectWS.workflow.blockedList.findIndex(
+      (data) => data.id == req.params.blockedid,
+    );
+    selectWS.workflow.blockedList[modifyBlockedIndex].content =
+      req.body.modifyContent;
+    await WorkSpace.updateOne(
+      {
+        _id: ObjectId(req.params.id),
+      },
+      {
+        $set: {
+          workflow: {
+            ...selectWS.workflow,
+          },
+        },
+      },
+    );
+    res.redirect('/workspace/' + req.params.id);
+  } catch (err) {
+    console.log(err);
+  }
+};
+const deleteBlockedList = async (req, res) => {
+  try {
+    const selectWS = await WorkSpace.findOne({
+      _id: ObjectId(req.params.id),
+    });
+    const remainBlockedList = selectWS.workflow.blockedList.filter(
+      (data) => data.id != req.params.blockedid,
+    );
+    await WorkSpace.updateOne(
+      {
+        _id: ObjectId(req.params.id),
+      },
+      {
+        $set: {
+          workflow: {
+            requestList: [...selectWS.workflow.requestList],
+            inProgressList: [...selectWS.workflow.inProgressList],
+            inReviewList: [...selectWS.workflow.inReviewList],
+            blockedList: [...remainBlockedList],
+            completedList: [...selectWS.workflow.completedList],
+          },
+        },
+      },
+    );
+    res.redirect('/workspace/' + req.params.id);
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+// completed list
+const addCompletedList = async (req, res) => {
+  try {
+    const selectWS = await WorkSpace.findOne({
+      _id: ObjectId(req.params.id),
+    });
+    await WorkSpace.updateOne(
+      {
+        _id: ObjectId(req.params.id),
+      },
+      {
+        $set: {
+          workflow: {
+            requestList: [...selectWS.workflow.requestList],
+            inProgressList: [...selectWS.workflow.inProgressList],
+            inReviewList: [...selectWS.workflow.inReviewList],
+            blockedList: [...selectWS.workflow.blockedList],
+            completedList: [
+              ...selectWS.workflow.completedList,
+              {
+                id: String(new ObjectId()),
+                content: req.body.completedList_content,
+                createDate: new Date(),
+                endDate: req.body.completedList_endDate,
+                importance: req.body.completedList_importance,
+              },
+            ],
+          },
+        },
+      },
+    );
+    res.redirect('/workspace/' + req.params.id);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send(err.message);
+  }
+};
+const updateCompletedList = async (req, res) => {
+  try {
+    const selectWS = await WorkSpace.findOne({
+      _id: ObjectId(req.params.id),
+    });
+    const modifyCompletedIndex = selectWS.workflow.completedList.findIndex(
+      (data) => data.id == req.params.completedid,
+    );
+    selectWS.workflow.blockedList[modifyCompletedIndex].content =
+      req.body.modifyContent;
+    await WorkSpace.updateOne(
+      {
+        _id: ObjectId(req.params.id),
+      },
+      {
+        $set: {
+          workflow: {
+            ...selectWS.workflow,
+          },
+        },
+      },
+    );
+    res.redirect('/workspace/' + req.params.id);
+  } catch (err) {
+    console.log(err);
+  }
+};
+const deleteCompletedList = async (req, res) => {
+  try {
+    const selectWS = await WorkSpace.findOne({
+      _id: ObjectId(req.params.id),
+    });
+    const remainCompletedList = selectWS.workflow.completedList.filter(
+      (data) => data.id != req.params.completedid,
+    );
+    await WorkSpace.updateOne(
+      {
+        _id: ObjectId(req.params.id),
+      },
+      {
+        $set: {
+          workflow: {
+            requestList: [...selectWS.workflow.requestList],
+            inProgressList: [...selectWS.workflow.inProgressList],
+            inReviewList: [...selectWS.workflow.inReviewList],
+            blockedList: [...selectWS.workflow.blockedList],
+            completedList: [...remainCompletedList],
           },
         },
       },
@@ -357,13 +564,24 @@ module.exports = {
   selectWS,
   deleteWS,
   inviteUser,
-  addTodoList,
-  updateTodoList,
-  deleteTodoList,
-  addInprogressList,
-  updateInprogressList,
-  deleteInprogressList,
-  addDoneList,
-  updateDoneList,
-  deleteDoneList,
+
+  addRequestList,
+  updateRequestList,
+  deleteRequestList,
+
+  addInProgressList,
+  updateInProgressList,
+  deleteInProgressList,
+
+  addInReviewList,
+  updateInReviewList,
+  deleteInReviewList,
+
+  addBlockedList,
+  updateBlockedList,
+  deleteBlockedList,
+
+  addCompletedList,
+  updateCompletedList,
+  deleteCompletedList,
 };
