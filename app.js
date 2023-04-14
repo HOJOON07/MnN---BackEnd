@@ -25,7 +25,6 @@ const userRouter = require('./routes/userRouter');
 app.use('/', homeRouter);
 app.use('/user', userRouter);
 app.use('/token', tokenRouter);
-app.use('/auth', [userRouter]); //카카오
 
 const workspaceRouter = require('./routes/workspace');
 
