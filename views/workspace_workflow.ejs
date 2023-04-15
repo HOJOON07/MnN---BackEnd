@@ -15,59 +15,241 @@
       <h2 class="workspace_workflow">
         워크플로우 
       </h2>
-      <ul class="workflow_list">
-        <% if (selectWS.workflow.length > 0) { %>
-        <% for(let i=0; i < selectWS.workflow.length; i++) { %>
-        <h3>워크플로우 정보</h3>
-        <ul>
-          <li>워크플로우 이름 : <%=selectWS.workflow[i].name%></a></li>
-          <li>워크플로우 시작일 : <%=selectWS.workflow[i].startDate%></a></li>
-          <li>워크플로우 종료일 : <%=selectWS.workflow[i].endDate%></a></li>
-          <br/>
-          <br/>
+      <div>
+        <h3>RequestList</h3>
+        <ul class="workflow_requestlist">
+          <% if (selectWS.workflow.requestList.length > 0) { %>
+          <% for(let i=0; i < selectWS.workflow.requestList.length; i++) { %>
+          <h3>requestList <%=i%></h3>
+          <form action="/workspace/<%=selectWS._id%>/<%=selectWS.workflow.requestList[i].id%>/deleterequestlist" method="POST" class="board_form">
+            <button type="submit">삭제</button> 
+          </form>
+          <ul>
+            <li>requestList id : <%=selectWS.workflow.requestList[i].id%></li>
+            <li class="requestList_content">requestList 내용 : <%=selectWS.workflow.requestList[i].content%>
+              <form action="/workspace/<%=selectWS._id%>/<%=selectWS.workflow.requestList[i].id%>/updaterequestlist" method="POST" class="board_form">
+                <input name="modifyContent"></input>
+                <button type="submit">수정하기</button>
+              </form>
+            </li>
+            <li>requestList 생성일 : <%=selectWS.workflow.requestList[i].createDate%></li>
+            <li>requestList 마감일 : <%=selectWS.workflow.requestList[i].endDate%></li>
+            <li>requestList 중요도 : <%=selectWS.workflow.requestList[i].importance%></li>
+          </ul>
+          <% } %>
         </ul>
+        <% } else { %>
+          <div class="no">requestList가 없습니다.</div>
         <% } %>
-      </ul>
-      <% } else { %>
-        <div class="no">생성된 워크플로우가 없습니다.</div>
-      <% } %>
-    </div>
-    <hr/>
-    <div>
-      <h2 class="workspace_member">
-        멤버
-      </h2>
-      <ul class="member_list">
-        <% if (selectWS.member.length > 0) { %>
-        <% for(let i=0; i < selectWS.member.length; i++) { %>
-        <li><%=selectWS.member[i]%></a></li>
-        <br/>
-        <br/>
+        <hr/>
+      </div>
+      <div>
+        <h3>InProgressList</h3>
+        <ul class="workflow_inprogresslist">
+          <% if (selectWS.workflow.inProgressList.length > 0) { %>
+          <% for(let i=0; i < selectWS.workflow.inProgressList.length; i++) { %>
+          <h3>inProgressList<%=i%></h3>
+          <form action="/workspace/<%=selectWS._id%>/<%=selectWS.workflow.inProgressList[i].id%>/deleteinprogresslist" method="POST" class="board_form">
+            <button type="submit">삭제</button> 
+          </form>
+          <ul>
+            <li>inProgressList 내용 : <%=selectWS.workflow.inProgressList[i].content%>
+              <form action="/workspace/<%=selectWS._id%>/<%=selectWS.workflow.inProgressList[i].id%>/updateinprogresslist" method="POST" class="board_form">
+              <input name="modifyContent"></input>
+              <button type="submit">수정하기</button>
+              </form>
+            </li>
+            <li>inProgressList 생성일 : <%=selectWS.workflow.inProgressList[i].createDate%></li>
+            <li>inProgressList 마감일 : <%=selectWS.workflow.inProgressList[i].endDate%></li>
+            <li>inProgressList 중요도 : <%=selectWS.workflow.inProgressList[i].importance%></li>
+          </ul>
+          <% } %>
+        </ul>
+        <% } else { %>
+          <div class="no">inProgressList가 없습니다.</div>
         <% } %>
-      </ul>
-      <% } else { %>
-        <div class="no">추가된 유저가 없습니다.</div>
-      <% } %>
+        <hr/>
+      </div>
+      <div>
+        <h3>InReviewList</h3>
+        <ul class="workflow_inreviewlist">
+          <% if (selectWS.workflow.inReviewList.length > 0) { %>
+          <% for(let i=0; i < selectWS.workflow.inReviewList.length; i++) { %>
+          <h3>inReviewsList<%=i%></h3>
+          <form action="/workspace/<%=selectWS._id%>/<%=selectWS.workflow.inReviewList[i].id%>/deleteinreviewlist" method="POST" class="board_form">
+            <button type="submit">삭제</button> 
+          </form>
+          <ul>
+            <li>inReviewList 내용 : <%=selectWS.workflow.inReviewList[i].content%>
+              <form action="/workspace/<%=selectWS._id%>/<%=selectWS.workflow.inReviewList[i].id%>/updateinreviewlist" method="POST" class="board_form">
+              <input name="modifyContent"></input>
+              <button type="submit">수정하기</button>
+              </form>
+            </li>
+            <li>inReviewList 생성일 : <%=selectWS.workflow.inReviewList[i].createDate%></li>
+            <li>inReviewList 마감일 : <%=selectWS.workflow.inReviewList[i].endDate%></li>
+            <li>inReviewList 중요도 : <%=selectWS.workflow.inReviewList[i].importance%></li>
+          </ul>
+          <% } %>
+        </ul>
+        <% } else { %>
+          <div class="no">inReviewList가 없습니다.</div>
+        <% } %>
+        <hr/>
+      </div>
+      <div>
+        <h3>BlockedList</h3>
+        <ul class="workflow_blockedlist">
+          <% if (selectWS.workflow.blockedList.length > 0) { %>
+          <% for(let i=0; i < selectWS.workflow.blockedList.length; i++) { %>
+          <h3>blockedList<%=i%></h3>
+          <form action="/workspace/<%=selectWS._id%>/<%=selectWS.workflow.blockedList[i].id%>/deleteblockedlist" method="POST" class="board_form">
+            <button type="submit">삭제</button> 
+          </form>
+          <ul>
+            <li>blockedList 내용 : <%=selectWS.workflow.blockedList[i].content%>
+              <form action="/workspace/<%=selectWS._id%>/<%=selectWS.workflow.blockedList[i].id%>/updateblockedlist" method="POST" class="board_form">
+              <input name="modifyContent"></input>
+              <button type="submit">수정하기</button>
+              </form>
+            </li>
+            <li>blockedList 생성일 : <%=selectWS.workflow.blockedList[i].createDate%></li>
+            <li>blockedList 마감일 : <%=selectWS.workflow.blockedList[i].endDate%></li>
+            <li>blockedList 중요도 : <%=selectWS.workflow.blockedList[i].importance%></li>
+          </ul>
+          <% } %>
+        </ul>
+        <% } else { %>
+          <div class="no">blockedList가 없습니다.</div>
+        <% } %>
+        <hr/>
+      </div>
+      <div>
+        <h3>CompletedList</h3>
+        <ul class="workflow_completedlist">
+          <% if (selectWS.workflow.completedList.length > 0) { %>
+          <% for(let i=0; i < selectWS.workflow.completedList.length; i++) { %>
+          <h3>completedList<%=i%></h3>
+          <form action="/workspace/<%=selectWS._id%>/<%=selectWS.workflow.completedList[i].id%>/deletecompletedlist" method="POST" class="board_form">
+            <button type="submit">삭제</button> 
+          </form>
+          <ul>
+            <li>completedList 내용 : <%=selectWS.workflow.completedList[i].content%>
+              <form action="/workspace/<%=selectWS._id%>/<%=selectWS.workflow.completedList[i].id%>/updatecompletedlist" method="POST" class="board_form">
+                <input name="modifyContent"></input>
+              <button type="submit">수정하기</button>
+              </form>
+            </li>
+            <li>completedList 생성일 : <%=selectWS.workflow.completedList[i].createDate%></li>
+            <li>completedList 마감일 : <%=selectWS.workflow.completedList[i].endDate%></li>
+            <li>completedList 중요도 : <%=selectWS.workflow.completedList[i].importance%></li>
+          </ul>
+          <% } %>
+        </ul>
+        <% } else { %>
+          <div class="no">completedList가 없습니다.</div>
+        <% } %>
+        <hr/>
+      </div>
     </div>
   </div>
-  <form action="/workspace/<%=selectWS._id%>/addwf" method="POST" class="board_form">
+  <form action="/workspace/<%=selectWS._id%>/addrequestlist" method="POST" class="board_form">
     <div class="form_workflow-name">
-      <h3>워크 플로우</h3>
-      이름 : <input type="text" name="workflow_name" required></input>
-      <br>
-      시작일 : <input type="date" name="workflow_startDate" required></input>
-      <br>
-      종료일 : <input type="date" name="workflow_endDate" required></input>
+      <h3>RequestList 추가</h3>
+      내용 : <input type="text" name="requestList_content" required></input>
+      <br/>
+      종료일 : <input type="date" name="requestList_endDate" required></input>
+      <br/>
+      중요도 : <input type="text" name="requestList_importance" required></input>
     </div>
-    <button type="submit">워크플로우 생성</button>
+    <button type="submit">Request 추가</button>
   </form>
-  <form action="/workspace/<%=selectWS._id%>/addmember" method="POST" class="board_form">
+  <form action="/workspace/<%=selectWS._id%>/addinprogresslist" method="POST" class="board_form">
     <div class="form_workflow-name">
-      <h3>유저 ID</h3>
-      <input type="text" name="member" required></input>
+      <h3>InProgress List 추가</h3>
+      내용 : <input type="text" name="inProgressList_content" required></input>
+      <br>
+      종료일 : <input type="date" name="inProgressList_endDate" required></input>
+      <br/>
+      중요도 : <input type="text" name="inProgressList_importance" required></input>
     </div>
-    <button type="submit">멤버 추가</button>
+    <button type="submit">InProgress 추가</button>
   </form>
-  
+  <form action="/workspace/<%=selectWS._id%>/addinreviewlist" method="POST" class="board_form">
+    <div class="form_workflow-name">
+      <h3>InReview List 추가</h3>
+      내용 : <input type="text" name="inReviewList_content" required></input>
+      <br>
+      종료일 : <input type="date" name="inReviewList_endDate" required></input>
+      <br/>
+      중요도 : <input type="text" name="inReviewList_importance" required></input>
+    </div>
+    <button type="submit">InReview 추가</button>
+  </form>
+  <form action="/workspace/<%=selectWS._id%>/addblockedlist" method="POST" class="board_form">
+    <div class="form_workflow-name">
+      <h3>Blocked List 추가</h3>
+      내용 : <input type="text" name="blockedList_content" required></input>
+      <br>
+      종료일 : <input type="date" name="blockedList_endDate" required></input>
+      <br/>
+      중요도 : <input type="text" name="blockedList_importance" required></input>
+    </div>
+    <button type="submit">Blocked 추가</button>
+  </form>
+  <form action="/workspace/<%=selectWS._id%>/addcompletedlist" method="POST" class="board_form">
+    <div class="form_workflow-name">
+      <h3>Completed List 추가</h3>
+      내용 : <input type="text" name="completedList_content" required></input>
+      <br>
+      종료일 : <input type="date" name="completedList_endDate" required></input>
+      <br/>
+      중요도 : <input type="text" name="completedList_importance" required></input>
+    </div>
+    <button type="submit">Completed 추가</button>
+  </form>
 </body>
 </html>
+
+<script defer>
+
+  const deleteRequestList = async(id, requestId) => {
+    try{
+      const res = await fetch(`http://localhost:8001/workspace/${id}/${requestId}/deleterequestlist`,{
+        method: 'POST',
+        headers: {
+      'Content-type': 'application/json',},
+      })
+      if(res.status ===200) location.reload();
+    }catch(err) {
+      console.log(err);
+    }
+  }
+  
+  const deleteInProgressList = async(id, inProgressId) => {
+    try{
+      const res = await fetch(`http://localhost:8001/workspace/${id}/${inProgressId}/deleteinprogresslist`,{
+        method: 'POST',
+        headers: {
+      'Content-type': 'application/json',},
+      })
+      if(res.status ===200) location.reload();
+    }catch(err) {
+      console.log(err);
+    }
+  }
+ 
+  const deleteInReviewList = async(id, inReviewId) => {
+    try{
+      const res = await fetch(`http://localhost:8001/workspace/${id}/${inReviewId}/deleteinreviewlist`,{
+        method: 'POST',
+        headers: {
+      'Content-type': 'application/json',},
+      })
+      if(res.status ===200) location.reload();
+    }catch(err) {
+      console.log(err);
+    }
+  }
+ 
+</script>

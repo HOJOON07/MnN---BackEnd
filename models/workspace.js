@@ -12,11 +12,15 @@ const workSpaceSchema = new Schema(
       type: String,
       require: true,
     },
+    workspace_type: {
+      type: String,
+      require: true,
+    },
     workspace_startDate: {
-      type: Date,
+      type: String,
     },
     workspace_endDate: {
-      type: Date,
+      type: String,
     },
     githubRepository: {
       type: String,
@@ -31,7 +35,7 @@ const workSpaceSchema = new Schema(
     },
   },
   {
-    collection: 'test-workspace',
+    collection: 'workspace',
     versionKey: false,
   },
 );
