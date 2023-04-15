@@ -6,6 +6,7 @@ const {
   loginUser,
   addUserInfo,
   logout,
+  loginSuccess,
   kakaoLogin,
   githubLogin,
   gitLogin,
@@ -21,5 +22,6 @@ userRouter.post('/logout', logout);
 userRouter.post('/kakaologin', kakaoLogin);
 userRouter.post('/githublogin', githubLogin);
 userRouter.post('/gitloginsuccess', gitLogin);
+userRouter.get('/loginsuccess', loginSuccess);
 
 module.exports = userRouter;

@@ -10,7 +10,16 @@ passportConfig(app);
 
 const { PORT } = process.env;
 app.set('view engine', 'ejs');
-app.use(cors());
+let corsOptions = {
+  origin: '*',
+  Credential: true,
+};
+app.use(
+  cors({
+    origin: true,
+    credentials: true,
+  }),
+);
 app.use(express.static('public'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
