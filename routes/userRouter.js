@@ -10,6 +10,9 @@ const {
   kakaoLogin,
   githubLogin,
   gitLogin,
+  accessTokenMiddleware,
+  refreshToken,
+  test,
 } = require('../controllers/userController');
 const user = require('../models/user');
 
@@ -23,5 +26,6 @@ userRouter.post('/kakaologin', kakaoLogin);
 userRouter.post('/githublogin', githubLogin);
 userRouter.post('/gitloginsuccess', gitLogin);
 userRouter.get('/loginsuccess', loginSuccess);
+userRouter.post('/test', accessTokenMiddleware, test);
 
 module.exports = userRouter;

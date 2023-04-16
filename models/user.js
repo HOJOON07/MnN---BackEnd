@@ -55,6 +55,7 @@ const userSchema = new Schema(
     },
     img: {},
     user_workspace: {},
+    user_teamleader: {},
   },
   {
     collection: 'user',

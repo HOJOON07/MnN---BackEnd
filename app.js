@@ -10,10 +10,6 @@ passportConfig(app);
 
 const { PORT } = process.env;
 app.set('view engine', 'ejs');
-let corsOptions = {
-  origin: '*',
-  Credential: true,
-};
 app.use(
   cors({
     origin: true,
