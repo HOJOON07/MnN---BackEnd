@@ -8,7 +8,7 @@ const userSchema = new Schema(
       type: String,
       required: true,
       minLength: 6,
-      maxLength: 14,
+      maxLength: 30,
       unique: true,
       trim: true,
     },
@@ -16,7 +16,6 @@ const userSchema = new Schema(
       type: String,
       required: true,
       minLength: 8,
-      unique: true,
       trim: true,
     },
     user_name: {
@@ -26,7 +25,7 @@ const userSchema = new Schema(
     },
     user_email: {
       type: String,
-      required: true,
+      // required: true,
       unique: true,
       // match: /.+\@.+@..+/,
       trim: true,
@@ -56,6 +55,7 @@ const userSchema = new Schema(
     },
     img: {},
     user_workspace: {},
+    user_teamleader: {},
   },
   {
     collection: 'user',

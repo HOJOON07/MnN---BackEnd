@@ -5,7 +5,7 @@ const WorkSpace = require('../models/workspace');
 // workspace
 const createWS = async (req, res) => {
   try {
-    await WorkSpace.create({
+    const createData = await WorkSpace.create({
       workspace_name: req.body.workspace_name,
       workspace_category: req.body.workspace_category,
       workspace_type: req.body.workspace_type,
@@ -21,7 +21,7 @@ const createWS = async (req, res) => {
         completedList: [],
       },
     });
-    res.redirect('/workspace');
+    return res.status(200).json(createData);
   } catch (err) {
     console.error(err);
     res.status(500).send(err.message);
@@ -39,8 +39,8 @@ const inviteUser = async (req, res) => {
       },
       { $set: { member: [...selectWS.member, req.body.member] } },
     );
-
     res.redirect('/workspace/' + req.params.id);
+    // return res.status(200);
   } catch (err) {
     console.error(err);
     res.status(500).send(err.message);
@@ -66,8 +66,7 @@ const selectWS = async (req, res) => {
     });
     console.log(selectWS);
     if (!selectWS) res.statsus(400).send(err.message);
-    return res.status(200).json(selectWS);
-    // res.render('workspace_workflow.ejs', { selectWS });
+    res.render('workspace_workflow.ejs', { selectWS });
   } catch (err) {
     console.error(err);
     res.status(500).send(err.message);
@@ -80,6 +79,7 @@ const deleteWS = async (req, res) => {
       _id: ObjectId(req.params.id),
     });
     res.redirect('/');
+    // return res.status(200);
   } catch (err) {
     console.error(err);
     res.status(500).send(err.message);
@@ -87,6 +87,28 @@ const deleteWS = async (req, res) => {
 };
 
 // workspace-workflow
+const updateAllWF = async (req, res) => {
+  try {
+    const selectWS = await WorkSpace.findOne({
+      _id: ObjectId(req.params.id),
+    });
+    await WorkSpace.updateOne(
+      {
+        _id: ObjectId(req.params.id),
+      },
+      {
+        $set: {
+          workflow: req.body.workflow,
+        },
+      },
+    );
+    return res.status(200);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send(err.message);
+  }
+};
+
 //requestList
 const addRequestList = async (req, res) => {
   try {
@@ -120,6 +142,7 @@ const addRequestList = async (req, res) => {
       },
     );
     res.redirect('/workspace/' + req.params.id);
+    // return res.status(200);
   } catch (err) {
     console.error(err);
     res.status(500).send(err.message);
@@ -148,6 +171,7 @@ const updateRequestList = async (req, res) => {
       },
     );
     res.redirect('/workspace/' + req.params.id);
+    // return res.status(200);
   } catch (err) {
     console.log(err);
   }
@@ -178,6 +202,7 @@ const deleteRequestList = async (req, res) => {
       },
     );
     res.redirect('/workspace/' + req.params.id);
+    // return res.status(200);
   } catch (err) {
     console.error(err);
   }
@@ -216,6 +241,7 @@ const addInProgressList = async (req, res) => {
       },
     );
     res.redirect('/workspace/' + req.params.id);
+    // return res.status(200);
   } catch (err) {
     console.error(err);
     res.status(500).send(err.message);
@@ -244,6 +270,7 @@ const updateInProgressList = async (req, res) => {
       },
     );
     res.redirect('/workspace/' + req.params.id);
+    // return res.status(200);
   } catch (err) {
     console.log(err);
   }
@@ -274,6 +301,7 @@ const deleteInProgressList = async (req, res) => {
       },
     );
     res.redirect('/workspace/' + req.params.id);
+    // return res.status(200);
   } catch (err) {
     console.error(err);
   }
@@ -312,6 +340,7 @@ const addInReviewList = async (req, res) => {
       },
     );
     res.redirect('/workspace/' + req.params.id);
+    // return res.status(200);
   } catch (err) {
     console.error(err);
     res.status(500).send(err.message);
@@ -340,6 +369,7 @@ const updateInReviewList = async (req, res) => {
       },
     );
     res.redirect('/workspace/' + req.params.id);
+    // return res.status(200);
   } catch (err) {
     console.log(err);
   }
@@ -370,6 +400,7 @@ const deleteInReviewList = async (req, res) => {
       },
     );
     res.redirect('/workspace/' + req.params.id);
+    // return res.status(200);
   } catch (err) {
     console.error(err);
   }
@@ -408,6 +439,7 @@ const addBlockedList = async (req, res) => {
       },
     );
     res.redirect('/workspace/' + req.params.id);
+    // return res.status(200);
   } catch (err) {
     console.error(err);
     res.status(500).send(err.message);
@@ -436,6 +468,7 @@ const updateBlockedList = async (req, res) => {
       },
     );
     res.redirect('/workspace/' + req.params.id);
+    // return res.status(200);
   } catch (err) {
     console.log(err);
   }
@@ -465,6 +498,7 @@ const deleteBlockedList = async (req, res) => {
       },
     );
     res.redirect('/workspace/' + req.params.id);
+    // return res.status(200);
   } catch (err) {
     console.error(err);
   }
@@ -503,6 +537,7 @@ const addCompletedList = async (req, res) => {
       },
     );
     res.redirect('/workspace/' + req.params.id);
+    // return res.status(200);
   } catch (err) {
     console.error(err);
     res.status(500).send(err.message);
@@ -533,6 +568,7 @@ const updateCompletedList = async (req, res) => {
       },
     );
     res.redirect('/workspace/' + req.params.id);
+    // return res.status(200);
   } catch (err) {
     console.log(err);
   }
@@ -562,6 +598,7 @@ const deleteCompletedList = async (req, res) => {
       },
     );
     res.redirect('/workspace/' + req.params.id);
+    // return res.status(200);
   } catch (err) {
     console.error(err);
   }
@@ -572,6 +609,8 @@ module.exports = {
   selectWS,
   deleteWS,
   inviteUser,
+
+  updateAllWF,
 
   addRequestList,
   updateRequestList,

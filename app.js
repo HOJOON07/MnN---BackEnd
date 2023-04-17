@@ -2,6 +2,9 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 require('dotenv').config();
+const cookie = require('cookie-parser');
+const session = require('express-session');
+// const helmet = require('helmet');
 
 const app = express();
 
@@ -10,7 +13,19 @@ const passportConfig = require('./passport');
 
 const { PORT } = process.env;
 app.set('view engine', 'ejs');
-app.use(cors());
+// app.use(helmet());
+app.use(
+  cors({
+    origin: true,
+    credentials: true,
+  }),
+);
+app.use(cookie('ss'));
+// app.use(
+//   session({
+//     secret: 'secret',
+//   }),
+// );
 app.use(express.static('public'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -25,7 +40,6 @@ const userRouter = require('./routes/userRouter');
 app.use('/', homeRouter);
 app.use('/user', userRouter);
 app.use('/token', tokenRouter);
-app.use('/auth', [userRouter]); //카카오
 
 const workspaceRouter = require('./routes/workspace');
 
