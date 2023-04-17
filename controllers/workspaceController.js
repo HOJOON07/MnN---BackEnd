@@ -39,8 +39,8 @@ const inviteUser = async (req, res) => {
       },
       { $set: { member: [...selectWS.member, req.body.member] } },
     );
-    res.redirect('/workspace/' + req.params.id);
-    // return res.status(200);
+    // res.redirect('/workspace/' + req.params.id);
+    return res.status(200).json('json');
   } catch (err) {
     console.error(err);
     res.status(500).send(err.message);
@@ -66,7 +66,8 @@ const selectWS = async (req, res) => {
     });
     console.log(selectWS);
     if (!selectWS) res.statsus(400).send(err.message);
-    res.render('workspace_workflow.ejs', { selectWS });
+    return res.status(200).json(selectWS);
+    // res.render('workspace_workflow.ejs', { selectWS });
   } catch (err) {
     console.error(err);
     res.status(500).send(err.message);
@@ -74,12 +75,13 @@ const selectWS = async (req, res) => {
 };
 
 const deleteWS = async (req, res) => {
+  console.log(req.params.id);
   try {
     const deleteWS = await WorkSpace.deleteOne({
       _id: ObjectId(req.params.id),
     });
-    res.redirect('/');
-    // return res.status(200);
+    // res.redirect('/');
+    return res.status(200).json('json');
   } catch (err) {
     console.error(err);
     res.status(500).send(err.message);
@@ -102,7 +104,7 @@ const updateAllWF = async (req, res) => {
         },
       },
     );
-    return res.status(200);
+    return res.status(200).json('json');
   } catch (err) {
     console.error(err);
     res.status(500).send(err.message);
@@ -141,8 +143,8 @@ const addRequestList = async (req, res) => {
         },
       },
     );
-    res.redirect('/workspace/' + req.params.id);
-    // return res.status(200);
+    // res.redirect('/workspace/' + req.params.id);
+    return res.status(200).json('json');
   } catch (err) {
     console.error(err);
     res.status(500).send(err.message);
@@ -157,7 +159,13 @@ const updateRequestList = async (req, res) => {
       (data) => data.id == req.params.requestid,
     );
     selectWS.workflow.requestList[modifyRequestIndex].content =
-      req.body.modifyContent;
+      req.body.modifyContent.content;
+    selectWS.workflow.requestList[modifyRequestIndex].startDate =
+      req.body.modifyContent.startDate;
+    selectWS.workflow.requestList[modifyRequestIndex].endDate =
+      req.body.modifyContent.endDate;
+    selectWS.workflow.requestList[modifyRequestIndex].importance =
+      req.body.modifyContent.importance;
     await WorkSpace.updateOne(
       {
         _id: ObjectId(req.params.id),
@@ -170,8 +178,8 @@ const updateRequestList = async (req, res) => {
         },
       },
     );
-    res.redirect('/workspace/' + req.params.id);
-    // return res.status(200);
+    // res.redirect('/workspace/' + req.params.id);
+    return res.status(200).json('json');
   } catch (err) {
     console.log(err);
   }
@@ -201,8 +209,8 @@ const deleteRequestList = async (req, res) => {
         },
       },
     );
-    res.redirect('/workspace/' + req.params.id);
-    // return res.status(200);
+    // res.redirect('/workspace/' + req.params.id);
+    return res.status(200).json('json');
   } catch (err) {
     console.error(err);
   }
@@ -240,8 +248,8 @@ const addInProgressList = async (req, res) => {
         },
       },
     );
-    res.redirect('/workspace/' + req.params.id);
-    // return res.status(200);
+    // res.redirect('/workspace/' + req.params.id);
+    return res.status(200).json('json');
   } catch (err) {
     console.error(err);
     res.status(500).send(err.message);
@@ -256,7 +264,13 @@ const updateInProgressList = async (req, res) => {
       (data) => data.id == req.params.inprogressid,
     );
     selectWS.workflow.inProgressList[modifyInProgressIndex].content =
-      req.body.modifyContent;
+      req.body.modifyContent.content;
+    selectWS.workflow.inProgressList[modifyInProgressIndex].startDate =
+      req.body.modifyContent.startDate;
+    selectWS.workflow.inProgressList[modifyInProgressIndex].endDate =
+      req.body.modifyContent.endDate;
+    selectWS.workflow.inProgressList[modifyInProgressIndex].importance =
+      req.body.modifyContent.importance;
     await WorkSpace.updateOne(
       {
         _id: ObjectId(req.params.id),
@@ -269,8 +283,8 @@ const updateInProgressList = async (req, res) => {
         },
       },
     );
-    res.redirect('/workspace/' + req.params.id);
-    // return res.status(200);
+    // res.redirect('/workspace/' + req.params.id);
+    return res.status(200).json('json');
   } catch (err) {
     console.log(err);
   }
@@ -300,8 +314,8 @@ const deleteInProgressList = async (req, res) => {
         },
       },
     );
-    res.redirect('/workspace/' + req.params.id);
-    // return res.status(200);
+    // res.redirect('/workspace/' + req.params.id);
+    return res.status(200).json('json');
   } catch (err) {
     console.error(err);
   }
@@ -339,8 +353,8 @@ const addInReviewList = async (req, res) => {
         },
       },
     );
-    res.redirect('/workspace/' + req.params.id);
-    // return res.status(200);
+    // res.redirect('/workspace/' + req.params.id);
+    return res.status(200).json('json');
   } catch (err) {
     console.error(err);
     res.status(500).send(err.message);
@@ -355,7 +369,13 @@ const updateInReviewList = async (req, res) => {
       (data) => data.id == req.params.inreviewid,
     );
     selectWS.workflow.inReviewList[modifyInReviewIndex].content =
-      req.body.modifyContent;
+      req.body.modifyContent.content;
+    selectWS.workflow.inReviewList[modifyInReviewIndex].startDate =
+      req.body.modifyContent.startDate;
+    selectWS.workflow.inReviewList[modifyInReviewIndex].endDate =
+      req.body.modifyContent.endDate;
+    selectWS.workflow.inReviewList[modifyInReviewIndex].importance =
+      req.body.modifyContent.importance;
     await WorkSpace.updateOne(
       {
         _id: ObjectId(req.params.id),
@@ -368,8 +388,8 @@ const updateInReviewList = async (req, res) => {
         },
       },
     );
-    res.redirect('/workspace/' + req.params.id);
-    // return res.status(200);
+    // res.redirect('/workspace/' + req.params.id);
+    return res.status(200).json('json');
   } catch (err) {
     console.log(err);
   }
@@ -399,8 +419,8 @@ const deleteInReviewList = async (req, res) => {
         },
       },
     );
-    res.redirect('/workspace/' + req.params.id);
-    // return res.status(200);
+    // res.redirect('/workspace/' + req.params.id);
+    return res.status(200).json('json');
   } catch (err) {
     console.error(err);
   }
@@ -438,8 +458,8 @@ const addBlockedList = async (req, res) => {
         },
       },
     );
-    res.redirect('/workspace/' + req.params.id);
-    // return res.status(200);
+    // res.redirect('/workspace/' + req.params.id);
+    return res.status(200).json('json');
   } catch (err) {
     console.error(err);
     res.status(500).send(err.message);
@@ -454,7 +474,13 @@ const updateBlockedList = async (req, res) => {
       (data) => data.id == req.params.blockedid,
     );
     selectWS.workflow.blockedList[modifyBlockedIndex].content =
-      req.body.modifyContent;
+      req.body.modifyContent.content;
+    selectWS.workflow.blockedList[modifyBlockedIndex].startDate =
+      req.body.modifyContent.startDate;
+    selectWS.workflow.blockedList[modifyBlockedIndex].endDate =
+      req.body.modifyContent.endDate;
+    selectWS.workflow.blockedList[modifyBlockedIndex].importance =
+      req.body.modifyContent.importance;
     await WorkSpace.updateOne(
       {
         _id: ObjectId(req.params.id),
@@ -467,8 +493,8 @@ const updateBlockedList = async (req, res) => {
         },
       },
     );
-    res.redirect('/workspace/' + req.params.id);
-    // return res.status(200);
+    // res.redirect('/workspace/' + req.params.id);
+    return res.status(200).json('json');
   } catch (err) {
     console.log(err);
   }
@@ -497,8 +523,8 @@ const deleteBlockedList = async (req, res) => {
         },
       },
     );
-    res.redirect('/workspace/' + req.params.id);
-    // return res.status(200);
+    // res.redirect('/workspace/' + req.params.id);
+    return res.status(200).json('json');
   } catch (err) {
     console.error(err);
   }
@@ -536,15 +562,14 @@ const addCompletedList = async (req, res) => {
         },
       },
     );
-    res.redirect('/workspace/' + req.params.id);
-    // return res.status(200);
+    // res.redirect('/workspace/' + req.params.id);
+    return res.status(200).json('json');
   } catch (err) {
     console.error(err);
     res.status(500).send(err.message);
   }
 };
 const updateCompletedList = async (req, res) => {
-  console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!', req.params);
   try {
     const selectWS = await WorkSpace.findOne({
       _id: ObjectId(req.params.id),
@@ -552,9 +577,14 @@ const updateCompletedList = async (req, res) => {
     const modifyCompletedIndex = selectWS.workflow.completedList.findIndex(
       (data) => data.id == req.params.completedid,
     );
-    console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@', req.body);
     selectWS.workflow.completedList[modifyCompletedIndex].content =
-      req.body.modifyContent;
+      req.body.modifyContent.content;
+    selectWS.workflow.completedList[modifyCompletedIndex].startDate =
+      req.body.modifyContent.startDate;
+    selectWS.workflow.completedList[modifyCompletedIndex].endDate =
+      req.body.modifyContent.endDate;
+    selectWS.workflow.completedList[modifyCompletedIndex].importance =
+      req.body.modifyContent.importance;
     await WorkSpace.updateOne(
       {
         _id: ObjectId(req.params.id),
@@ -567,8 +597,8 @@ const updateCompletedList = async (req, res) => {
         },
       },
     );
-    res.redirect('/workspace/' + req.params.id);
-    // return res.status(200);
+    // res.redirect('/workspace/' + req.params.id);
+    return res.status(200).json('json');
   } catch (err) {
     console.log(err);
   }
@@ -597,8 +627,8 @@ const deleteCompletedList = async (req, res) => {
         },
       },
     );
-    res.redirect('/workspace/' + req.params.id);
-    // return res.status(200);
+    // res.redirect('/workspace/' + req.params.id);
+    return res.status(200).json('json');
   } catch (err) {
     console.error(err);
   }
