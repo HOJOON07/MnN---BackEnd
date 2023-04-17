@@ -21,14 +21,11 @@ app.use(
   }),
 );
 app.use(cookie('ss'));
-app.use(
-  session({
-    secret: 'secret',
-    cookie: {
-      sameSite: 'none',
-    },
-  }),
-);
+// app.use(
+//   session({
+//     secret: 'secret',
+//   }),
+// );
 app.use(express.static('public'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));

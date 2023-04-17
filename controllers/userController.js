@@ -30,6 +30,12 @@ const signUpUser = async (req, res) => {
     res.status(500).json('알 수 없는 오류, 입력한 정보를 다시 확인 해보세요.');
   }
 };
+const idCheck = async (req, res) => {
+  try {
+  } catch (err) {
+    console.log(err);
+  }
+};
 //회원 가입 후 (이미지,자기소개,스킬 )
 const addUserInfo = async (req, res) => {
   try {
@@ -102,6 +108,7 @@ const loginUser = async (req, res) => {
         },
       );
       //토큰 전송
+
       res.cookie('accessToken', accessToken, {
         sameSite: 'none',
         secure: true,
@@ -340,8 +347,37 @@ const kakaoLogin = async (req, res) => {
         secure: false,
         httpOnly: true,
       });
+
       return res.status(200).json('login success');
     }
+    const accessToken = jwt.sign(
+      {
+        user_id,
+      },
+      process.env.JWT_ACCESS_SECRET_KEY,
+      {
+        expiresIn: '10m',
+        issuer: 'server',
+      },
+    );
+    const refreshToken = jwt.sign(
+      {
+        user_id,
+      },
+      process.env.JWT_REFRESH_SECRET_KEY,
+      {
+        expiresIn: '14d',
+        issuer: 'server',
+      },
+    );
+    res.cookie('accessToken', accessToken, {
+      secure: false,
+      httpOnly: true,
+    });
+    res.cookie('refreshToken', refreshToken, {
+      secure: false,
+      httpOnly: true,
+    });
     return res.status(200).json('login success');
 
     // const findUser = await User.findOne({ user_id: req.body.user_id });
