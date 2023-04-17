@@ -7,6 +7,52 @@ const crypto = require('crypto');
 
 // 토큰 인증 미들웨어
 
+//중복된 아이디 컨트롤러
+const checkID = async (req, res) => {
+  const findUser = await User.findOne({ user_id: req.body.user_id });
+  if (findUser) {
+    return res.status(400).json('이미 가입된 회원입니다.');
+  } else {
+    return res.status(200).json('사용 가능한 아이디 입니다.');
+  }
+  // res.status(500).json('올바른 형식이 아닙니다.');
+};
+
+//중복된 이메일 컨트롤러
+const checkEmail = async (req, res) => {
+  const findEmail = await User.findOne({ user_email: req.body.user_email });
+  if (findEmail) {
+    return res.status(400).json('이미 가입된 이메일 주소 입니다.');
+  } else {
+    return res.status(200).json('사용 가능한 이메일 입니다.');
+  }
+  // res.status(500).json('올바른 형식이 아닙니다.');
+};
+
+//검색결과 유저 리스트
+const searchUser = async (req, res) => {
+  const userList = await User.find({});
+  const searchResult = userList.filter(
+    (list) => list.user_id.search(req.body.result) !== -1,
+  );
+  res.status(200).json(searchResult);
+};
+
+//백엔드에서 처리해주는 코드
+const searchUsers = async (req, res) => {
+  try {
+    const userList = await User.find({
+      user_id: { $regex: req.query.result, $options: 'i' },
+    });
+    if (userList.length === 0) {
+      return res.status(404).json({ error: '검색 결과가 없습니다.' });
+    }
+    return res.status(200).json(userList);
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  }
+};
+
 //회원가입 컨트롤러
 const signUpUser = async (req, res) => {
   try {
@@ -30,6 +76,7 @@ const signUpUser = async (req, res) => {
     res.status(500).json('알 수 없는 오류, 입력한 정보를 다시 확인 해보세요.');
   }
 };
+
 //회원 가입 후 (이미지,자기소개,스킬 )
 const addUserInfo = async (req, res) => {
   try {
@@ -57,7 +104,6 @@ const addUserInfo = async (req, res) => {
 //로그인 컨트롤러
 
 const loginUser = async (req, res) => {
-  console.log('req 액세스 토큰', req.accessToken);
   try {
     const findUser = await User.findOne({ user_id: req.body.user_id });
     const match = await bcrypt.compare(
@@ -77,14 +123,14 @@ const loginUser = async (req, res) => {
       // );
       const accessToken = jwt.sign(
         {
-          // user_id: findUser.user_id,
-          user_id: 'ghwns1007',
-          // user_name: findUser.user_name,
-          user_name: '김호준',
+          user_id: findUser.user_id,
+          // user_id: 'ghwns1007',
+          user_name: findUser.user_name,
+          // user_name: '김호준',
         },
         process.env.JWT_ACCESS_SECRET_KEY,
         {
-          expiresIn: '10m',
+          expiresIn: '1h',
           issuer: 'server',
         },
       );
@@ -103,46 +149,25 @@ const loginUser = async (req, res) => {
         },
       );
       //토큰 전송
+
       res.cookie('accessToken', accessToken, {
-        secure: false,
-        httpOnly: true,
+        credentials: true,
       });
       res.cookie('refreshToken', refreshToken, {
-        secure: false,
-        httpOnly: true,
+        credentials: true,
       });
-      // const data = jwt.verify(accessToken, process.env.JWT_ACCESS_SECRET_KEY);
-      // // console.log(data);
-      // const result = {
-      //   message: 'login success',
-      //   accessToken,
-      //   refreshToken,
-      //   data,
-      // };
-      // const cookies = req.headers.cookie.split('; ');
-      // const acsToken = cookies
-      //   .find((cookie) => cookie.startsWith('accessToken='))
-      //   .split('=')[1];
-      // const refToken = cookies
-      //   .find((cookie) => cookie.startsWith('refreshToken='))
-      //   .split('=')[1];
 
-      // const token = req.headers.cookie;
-
-      // const decoding = decodeURIComponent(token);
-
-      // const tokenObj = JSON.parse(decoding);
-      // console.log(tokenObj);
-      // console.log(acsToken);
-      // console.log(refToken);
-      // console.log(tokenObj);
       const data = {
         accessToken,
         refreshToken,
       };
-      // console.log(data);
-      // console.log(req.headers.cookie);
-      res.status(200).json('login sucess'); //유저아이디가 있고 비밀번호가 일치할 때
+      console.log('header', req.headers.cookie);
+      // res.status(200).json('login sucess'); //유저아이디가 있고 비밀번호가 일치할 때
+      res.status(200).json({
+        status: '200',
+        accessToken,
+        refreshToken,
+      });
     }
   } catch (err) {
     res.status(500).json(err);
@@ -150,20 +175,25 @@ const loginUser = async (req, res) => {
   }
 };
 //인증을 위한것
-const accessToken = async (req, res, next) => {
+const accessTokenMiddleware = async (req, res, next) => {
+  const ACCESTOKEN = req.header('accessToken');
+  const REFRESHTOKEN = req.header('refreshToken');
+  console.log('액세스', ACCESTOKEN);
+  console.log('리프레쉬', REFRESHTOKEN);
   try {
     const cookies = req.headers.cookie.split('; ');
 
     const acsToken = cookies
       .find((cookie) => cookie.startsWith('accessToken='))
       .split('=')[1];
-    console.log('1!!!');
-    console.log(acsToken);
+
+    console.log('토큰 검증 미들웨어, 엑세스토큰', acsToken);
     if (acsToken !== '') {
       const data = jwt.verify(acsToken, process.env.JWT_ACCESS_SECRET_KEY);
+      console.log('토큰 검증 미들웨어, 디코드 데이터', data);
       // const findUser = await User.findOne({ user_id: data.user_id });
       // const { user_password, ...others } = findUser;
-      next();
+      return next();
     } else {
       const refToken = cookies
         .find((cookie) => cookie.startsWith('refreshToken='))
@@ -188,70 +218,53 @@ const accessToken = async (req, res, next) => {
           },
         );
         req.accessToken = accessToken;
-        // res.cookie('accessToken', accessToken, {
-        //   secure: false,
-        //   httpOnly: true,
-        // });
-        next();
+        res.cookie('accessToken', accessToken, {
+          credentials: true,
+        });
+        return next();
+      } else {
+        return res.status(501).json('로그인이 필요 합니다');
       }
     }
-
-    console.log('!!!!!');
-    // jwt.verify(acsToken, JWT_ACCESS_SECRET_KEY, (err, decode) => {
-    //   console.log(err);
-    //   console.log(decode);
-    // });
-    // console.log('데이터 !!', data);
-    // if (data === undefined) {
-    //   const cookies = req.headers.cookie.split('; ');
-    //   const refToken = cookies
-    //     .find((cookie) => cookie.startsWith('refreshToken='))
-    //     .split('=')[1];
-    //   const refreshdata = jwt.verify(
-    //     refToken,
-    //     process.env.JWT_REFRESH_SECRET_KEY,
-    //   );
-    //   console.log(refreshdata);
-    // }
-    // const findUser = await User.findOne({ user_id: data.user_id });
-    // const { user_password, ...others } = findUser;
-
-    console.log('들어옴');
-    next();
-    // res.status(200).json(findUser);
   } catch (err) {
-    const cookies = req.headers.cookie.split('; ');
-    console.log(err);
-    const refToken = cookies
-      .find((cookie) => cookie.startsWith('refreshToken='))
-      .split('=')[1];
-    if (refToken !== '') {
-      const refreshdata = jwt.verify(
-        refToken,
-        process.env.JWT_REFRESH_SECRET_KEY,
-      );
-      const findUser = await User.findOne({ user_id: refreshdata.user_id });
-      const { user_password, ...others } = findUser;
-      // res.status(200).json(others);
-      //액세스 토큰 새로 발급
-      const accessToken = jwt.sign(
-        {
-          user_id: findUser.user_id,
-        },
-        process.env.JWT_ACCESS_SECRET_KEY,
-        {
-          expiresIn: 1000 * 10,
-          issuer: 'server',
-        },
-      );
-      req.accessToken = accessToken;
-      // res.cookie('accessToken', accessToken, {
-      //   secure: false,
-      //   httpOnly: true,
-      // });
-      next();
+    if (req.headers.cookie !== undefined) {
+      const cookies = req.headers.cookie.split('; ');
+      console.log(err);
+      const refToken = cookies
+        .find((cookie) => cookie.startsWith('refreshToken='))
+        .split('=')[1];
+      if (refToken !== '') {
+        const refreshdata = jwt.verify(
+          refToken,
+          process.env.JWT_REFRESH_SECRET_KEY,
+        );
+        const findUser = await User.findOne({ user_id: refreshdata.user_id });
+        const { user_password, ...others } = findUser;
+
+        const accessToken = jwt.sign(
+          {
+            user_id: findUser.user_id,
+          },
+          process.env.JWT_ACCESS_SECRET_KEY,
+          {
+            expiresIn: 1000 * 10,
+            issuer: 'server',
+          },
+        );
+        req.accessToken = accessToken;
+        res.cookie('accessToken', accessToken, {
+          credentials: true,
+        });
+        next();
+      } else {
+        console.log('11111');
+        return res.status(501).json('로그인이 필요 합니다');
+      }
+    } else {
+      console.log('22222');
+      return res.status(500).json('로그인 해주세요');
     }
-    // res.status(500).json(err);
+    next();
   }
 };
 //유효기간 연장
@@ -282,8 +295,7 @@ const refreshToken = async (req, res, next) => {
       },
     );
     res.cookie('accessToken', accessToken, {
-      secure: false,
-      httpOnly: true,
+      credentials: true,
     });
     req.user = findUser;
     // res.json(200).json(findUser);
@@ -301,7 +313,7 @@ const loginSuccess = async (req, res, next) => {
       .split('=')[1];
 
     const data = jwt.verify(acsToken, process.env.JWT_ACCESS_SECRET_KEY);
-    const findUser = await User.findOne({ u2ㄷser_id: data.user_id });
+    const findUser = await User.findOne({ user_id: data.user_id });
 
     next();
     // res.status(200).json(findUser);
@@ -350,7 +362,7 @@ const kakaoLogin = async (req, res) => {
         },
         process.env.JWT_ACCESS_SECRET_KEY,
         {
-          expiresIn: '24h',
+          expiresIn: '10m',
           issuer: 'server',
         },
       );
@@ -366,15 +378,42 @@ const kakaoLogin = async (req, res) => {
       );
       //토큰 전송
       res.cookie('accessToken', accessToken, {
-        secure: false,
-        httpOnly: true,
+        credentials: true,
       });
       res.cookie('refreshToken', refreshToken, {
-        secure: false,
-        httpOnly: true,
+        credentials: true,
       });
+
       return res.status(200).json('login success');
     }
+    const accessToken = jwt.sign(
+      {
+        user_id,
+      },
+      process.env.JWT_ACCESS_SECRET_KEY,
+      {
+        expiresIn: '10m',
+        issuer: 'server',
+      },
+    );
+    const refreshToken = jwt.sign(
+      {
+        user_id,
+      },
+      process.env.JWT_REFRESH_SECRET_KEY,
+      {
+        expiresIn: '14d',
+        issuer: 'server',
+      },
+    );
+    res.cookie('accessToken', accessToken, {
+      credentials: true,
+      sameSite: 'None',
+    });
+    res.cookie('refreshToken', refreshToken, {
+      credentials: true,
+      sameSite: 'None',
+    });
     return res.status(200).json('login success');
 
     // const findUser = await User.findOne({ user_id: req.body.user_id });
@@ -464,17 +503,28 @@ const gitLogin = async (req, res) => {
   }
 };
 
+const test = async (req, res, next) => {
+  if (req.accessToken !== undefined) {
+    return res.status(200).json('액세스 만료됨, 그래서 재발급');
+  }
+  return res.status(201).json('액세스 만료 안됨, 오케이');
+};
+
 module.exports = {
   signUpUser,
   addUserInfo,
   loginUser,
-  accessToken,
+  accessTokenMiddleware,
   refreshToken,
   loginSuccess,
   logout,
   kakaoLogin,
   githubLogin,
   gitLogin,
+  test,
+  checkID,
+  checkEmail,
+  searchUser,
 };
 // kakao_account_email
 // const accessToken = async (req, res, next) => {
