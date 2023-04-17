@@ -13,6 +13,9 @@ const {
   accessTokenMiddleware,
   refreshToken,
   test,
+  checkID,
+  checkEmail,
+  searchUser,
 } = require('../controllers/userController');
 const user = require('../models/user');
 
@@ -27,5 +30,8 @@ userRouter.post('/githublogin', githubLogin);
 userRouter.post('/gitloginsuccess', gitLogin);
 userRouter.get('/loginsuccess', loginSuccess);
 userRouter.post('/test', accessTokenMiddleware, test);
+userRouter.post('/checkid', checkID);
+userRouter.post('/checkemail', checkEmail);
+userRouter.post('/search', searchUser);
 
 module.exports = userRouter;
