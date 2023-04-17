@@ -20,7 +20,7 @@ app.use(
     credentials: true,
   }),
 );
-app.use(cookie('ss'));
+app.use(cookie());
 // app.use(
 //   session({
 //     secret: 'secret',

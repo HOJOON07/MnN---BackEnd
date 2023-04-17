@@ -7,6 +7,52 @@ const crypto = require('crypto');
 
 // 토큰 인증 미들웨어
 
+//중복된 아이디 컨트롤러
+const checkID = async (req, res) => {
+  const findUser = await User.findOne({ user_id: req.body.user_id });
+  if (findUser) {
+    return res.status(400).json('이미 가입된 회원입니다.');
+  } else {
+    return res.status(200).json('사용 가능한 아이디 입니다.');
+  }
+  // res.status(500).json('올바른 형식이 아닙니다.');
+};
+
+//중복된 이메일 컨트롤러
+const checkEmail = async (req, res) => {
+  const findEmail = await User.findOne({ user_email: req.body.user_email });
+  if (findEmail) {
+    return res.status(400).json('이미 가입된 이메일 주소 입니다.');
+  } else {
+    return res.status(200).json('사용 가능한 이메일 입니다.');
+  }
+  // res.status(500).json('올바른 형식이 아닙니다.');
+};
+
+//검색결과 유저 리스트
+const searchUser = async (req, res) => {
+  const userList = await User.find({});
+  const searchResult = userList.filter(
+    (list) => list.user_id.search(req.body.result) !== -1,
+  );
+  res.status(200).json(searchResult);
+};
+
+//백엔드에서 처리해주는 코드
+const searchUsers = async (req, res) => {
+  try {
+    const userList = await User.find({
+      user_id: { $regex: req.query.result, $options: 'i' },
+    });
+    if (userList.length === 0) {
+      return res.status(404).json({ error: '검색 결과가 없습니다.' });
+    }
+    return res.status(200).json(userList);
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  }
+};
+
 //회원가입 컨트롤러
 const signUpUser = async (req, res) => {
   try {
@@ -30,12 +76,7 @@ const signUpUser = async (req, res) => {
     res.status(500).json('알 수 없는 오류, 입력한 정보를 다시 확인 해보세요.');
   }
 };
-const idCheck = async (req, res) => {
-  try {
-  } catch (err) {
-    console.log(err);
-  }
-};
+
 //회원 가입 후 (이미지,자기소개,스킬 )
 const addUserInfo = async (req, res) => {
   try {
@@ -110,14 +151,10 @@ const loginUser = async (req, res) => {
       //토큰 전송
 
       res.cookie('accessToken', accessToken, {
-        sameSite: 'none',
-        secure: true,
-        httpOnly: true,
+        credentials: true,
       });
       res.cookie('refreshToken', refreshToken, {
-        sameSite: 'none',
-        secure: false,
-        httpOnly: true,
+        credentials: true,
       });
 
       const data = {
@@ -178,8 +215,7 @@ const accessTokenMiddleware = async (req, res, next) => {
         );
         req.accessToken = accessToken;
         res.cookie('accessToken', accessToken, {
-          secure: false,
-          httpOnly: true,
+          credentials: true,
         });
         return next();
       } else {
@@ -213,8 +249,7 @@ const accessTokenMiddleware = async (req, res, next) => {
         );
         req.accessToken = accessToken;
         res.cookie('accessToken', accessToken, {
-          secure: false,
-          httpOnly: true,
+          credentials: true,
         });
         next();
       } else {
@@ -256,8 +291,7 @@ const refreshToken = async (req, res, next) => {
       },
     );
     res.cookie('accessToken', accessToken, {
-      secure: false,
-      httpOnly: true,
+      credentials: true,
     });
     req.user = findUser;
     // res.json(200).json(findUser);
@@ -275,7 +309,7 @@ const loginSuccess = async (req, res, next) => {
       .split('=')[1];
 
     const data = jwt.verify(acsToken, process.env.JWT_ACCESS_SECRET_KEY);
-    const findUser = await User.findOne({ u2ㄷser_id: data.user_id });
+    const findUser = await User.findOne({ user_id: data.user_id });
 
     next();
     // res.status(200).json(findUser);
@@ -340,12 +374,10 @@ const kakaoLogin = async (req, res) => {
       );
       //토큰 전송
       res.cookie('accessToken', accessToken, {
-        secure: false,
-        httpOnly: true,
+        credentials: true,
       });
       res.cookie('refreshToken', refreshToken, {
-        secure: false,
-        httpOnly: true,
+        credentials: true,
       });
 
       return res.status(200).json('login success');
@@ -371,12 +403,12 @@ const kakaoLogin = async (req, res) => {
       },
     );
     res.cookie('accessToken', accessToken, {
-      secure: false,
-      httpOnly: true,
+      credentials: true,
+      sameSite: 'None',
     });
     res.cookie('refreshToken', refreshToken, {
-      secure: false,
-      httpOnly: true,
+      credentials: true,
+      sameSite: 'None',
     });
     return res.status(200).json('login success');
 
@@ -486,6 +518,9 @@ module.exports = {
   githubLogin,
   gitLogin,
   test,
+  checkID,
+  checkEmail,
+  searchUser,
 };
 // kakao_account_email
 // const accessToken = async (req, res, next) => {
