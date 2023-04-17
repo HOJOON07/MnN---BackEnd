@@ -50,9 +50,9 @@ const inviteUser = async (req, res) => {
 const getAllWS = async (req, res) => {
   try {
     const allWS = await WorkSpace.find({});
-    res.render('workspace.ejs', { allWS });
-    // if (!allWS) return res.status(400).send('실패');
-    // return res.status(200).json(allWS);
+    // res.render('workspace.ejs', { allWS });
+    if (!allWS) return res.status(400).send('실패');
+    return res.status(200).json(allWS);
   } catch (err) {
     console.error(err);
     res.status(500).send(err.message);
@@ -66,7 +66,8 @@ const selectWS = async (req, res) => {
     });
     console.log(selectWS);
     if (!selectWS) res.statsus(400).send(err.message);
-    res.render('workspace_workflow.ejs', { selectWS });
+    return res.status(200).json(selectWS);
+    // res.render('workspace_workflow.ejs', { selectWS });
   } catch (err) {
     console.error(err);
     res.status(500).send(err.message);
@@ -105,6 +106,7 @@ const addRequestList = async (req, res) => {
                 id: String(new ObjectId()),
                 content: req.body.requestList_content,
                 createDate: new Date(),
+                startDate: req.body.requestList_startDate,
                 endDate: req.body.requestList_endDate,
                 importance: req.body.requestList_importance,
               },
@@ -201,6 +203,7 @@ const addInProgressList = async (req, res) => {
                 id: String(new ObjectId()),
                 content: req.body.inProgressList_content,
                 createDate: new Date(),
+                startDate: req.body.inProgressList_startDate,
                 endDate: req.body.inProgressList_endDate,
                 importance: req.body.inProgressList_importance,
               },
@@ -297,6 +300,7 @@ const addInReviewList = async (req, res) => {
                 id: String(new ObjectId()),
                 content: req.body.inReviewList_content,
                 createDate: new Date(),
+                startDate: req.body.inReviewList_startDate,
                 endDate: req.body.inReviewList_endDate,
                 importance: req.body.inReviewList_importance,
               },
@@ -393,6 +397,7 @@ const addBlockedList = async (req, res) => {
                 id: String(new ObjectId()),
                 content: req.body.blockedList_content,
                 createDate: new Date(),
+                startDate: req.body.blockedList_startDate,
                 endDate: req.body.blockedList_endDate,
                 importance: req.body.blockedList_importance,
               },
@@ -488,6 +493,7 @@ const addCompletedList = async (req, res) => {
                 id: String(new ObjectId()),
                 content: req.body.completedList_content,
                 createDate: new Date(),
+                startDate: req.body.startDate,
                 endDate: req.body.completedList_endDate,
                 importance: req.body.completedList_importance,
               },
@@ -503,6 +509,7 @@ const addCompletedList = async (req, res) => {
   }
 };
 const updateCompletedList = async (req, res) => {
+  console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!', req.params);
   try {
     const selectWS = await WorkSpace.findOne({
       _id: ObjectId(req.params.id),
@@ -510,6 +517,7 @@ const updateCompletedList = async (req, res) => {
     const modifyCompletedIndex = selectWS.workflow.completedList.findIndex(
       (data) => data.id == req.params.completedid,
     );
+    console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@', req.body);
     selectWS.workflow.completedList[modifyCompletedIndex].content =
       req.body.modifyContent;
     await WorkSpace.updateOne(

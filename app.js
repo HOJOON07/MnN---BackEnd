@@ -6,7 +6,7 @@ require('dotenv').config();
 const app = express();
 
 const passportConfig = require('./passport');
-passportConfig(app);
+// passportConfig(app);
 
 const { PORT } = process.env;
 app.set('view engine', 'ejs');
