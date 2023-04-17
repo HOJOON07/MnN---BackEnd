@@ -76,14 +76,14 @@ const loginUser = async (req, res) => {
       // );
       const accessToken = jwt.sign(
         {
-          // user_id: findUser.user_id,
-          user_id: 'ghwns1007',
-          // user_name: findUser.user_name,
-          user_name: '김호준',
+          user_id: findUser.user_id,
+          // user_id: 'ghwns1007',
+          user_name: findUser.user_name,
+          // user_name: '김호준',
         },
         process.env.JWT_ACCESS_SECRET_KEY,
         {
-          expiresIn: 10,
+          expiresIn: '1h',
           issuer: 'server',
         },
       );
@@ -103,10 +103,12 @@ const loginUser = async (req, res) => {
       );
       //토큰 전송
       res.cookie('accessToken', accessToken, {
-        secure: false,
+        sameSite: 'none',
+        secure: true,
         httpOnly: true,
       });
       res.cookie('refreshToken', refreshToken, {
+        sameSite: 'none',
         secure: false,
         httpOnly: true,
       });
@@ -115,7 +117,13 @@ const loginUser = async (req, res) => {
         accessToken,
         refreshToken,
       };
-      res.status(200).json('login sucess'); //유저아이디가 있고 비밀번호가 일치할 때
+      console.log('header', req.headers.cookie);
+      // res.status(200).json('login sucess'); //유저아이디가 있고 비밀번호가 일치할 때
+      res.status(200).json({
+        status: '200',
+        accessToken,
+        refreshToken,
+      });
     }
   } catch (err) {
     res.status(500).json(err);
@@ -309,7 +317,7 @@ const kakaoLogin = async (req, res) => {
         },
         process.env.JWT_ACCESS_SECRET_KEY,
         {
-          expiresIn: '24h',
+          expiresIn: '10m',
           issuer: 'server',
         },
       );
@@ -424,9 +432,6 @@ const gitLogin = async (req, res) => {
 };
 
 const test = async (req, res, next) => {
-  console.log(req.accessToken);
-  console.log('좀 가즈아~~~~');
-
   if (req.accessToken !== undefined) {
     return res.status(200).json('액세스 만료됨, 그래서 재발급');
   }

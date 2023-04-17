@@ -25,6 +25,7 @@
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "express-session": "^1.17.3",
+    "helmet": "^6.1.5",
     "jsonwebtoken": "^9.0.0",
     "mongodb": "^4.0.0",
     "mongoose": "^7.0.2",

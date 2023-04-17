@@ -2,6 +2,9 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 require('dotenv').config();
+const cookie = require('cookie-parser');
+const session = require('express-session');
+// const helmet = require('helmet');
 
 const app = express();
 
@@ -10,10 +13,20 @@ passportConfig(app);
 
 const { PORT } = process.env;
 app.set('view engine', 'ejs');
+// app.use(helmet());
 app.use(
   cors({
     origin: true,
     credentials: true,
+  }),
+);
+app.use(cookie('ss'));
+app.use(
+  session({
+    secret: 'secret',
+    cookie: {
+      sameSite: 'none',
+    },
   }),
 );
 app.use(express.static('public'));
