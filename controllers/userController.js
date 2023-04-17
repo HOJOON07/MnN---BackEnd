@@ -9,17 +9,24 @@ const crypto = require('crypto');
 
 //중복된 아이디 컨트롤러
 const checkID = async (req, res) => {
+  if (!req.body.user_id) {
+    // user_id 값이 없을 경우
+    return res.status(400).json({ message: 'user_id가 비어있습니다.' });
+  }
+
   const findUser = await User.findOne({ user_id: req.body.user_id });
   if (findUser) {
-    return res.status(400).json('이미 가입된 회원입니다.');
+    return res.status(200).json({ message: '이미 가입된 회원입니다.' });
   } else {
-    return res.status(200).json('사용 가능한 아이디 입니다.');
+    return res.status(201).json({ message: '사용 가능한 아이디 입니다.' });
   }
-  // res.status(500).json('올바른 형식이 아닙니다.');
 };
 
 //중복된 이메일 컨트롤러
 const checkEmail = async (req, res) => {
+  if (!req.body.user_email) {
+    return res.status(400).json({ message: 'user_email이 비어있습니다.' });
+  }
   const findEmail = await User.findOne({ user_email: req.body.user_email });
   if (findEmail) {
     return res.status(400).json('이미 가입된 이메일 주소 입니다.');
@@ -224,7 +231,6 @@ const generateRandomString = (length) => {
 const kakaoLogin = async (req, res) => {
   try {
     const { user_id } = req.body;
-    console.log(req.body);
 
     const kakaoFindUser = await User.findOne({
       user_id,
@@ -251,22 +257,12 @@ const kakaoLogin = async (req, res) => {
           issuer: 'server',
         },
       );
-      const refreshToken = jwt.sign(
-        {
-          user_id,
-        },
-        process.env.JWT_REFRESH_SECRET_KEY,
-        {
-          expiresIn: '14d',
-          issuer: 'server',
-        },
-      );
+
       //토큰 전송
-      res.cookie('accessToken', accessToken, {
-        credentials: true,
-      });
-      res.cookie('refreshToken', refreshToken, {
-        credentials: true,
+      res.status(200).json({
+        status: '200',
+        message: '로그인 성공',
+        accessToken,
       });
 
       return res.status(200).json('login success');
@@ -281,34 +277,11 @@ const kakaoLogin = async (req, res) => {
         issuer: 'server',
       },
     );
-    const refreshToken = jwt.sign(
-      {
-        user_id,
-      },
-      process.env.JWT_REFRESH_SECRET_KEY,
-      {
-        expiresIn: '14d',
-        issuer: 'server',
-      },
-    );
-    res.cookie('accessToken', accessToken, {
-      credentials: true,
-      sameSite: 'None',
+    return res.status(200).json({
+      status: '200',
+      message: '로그인 성공',
+      accessToken,
     });
-    res.cookie('refreshToken', refreshToken, {
-      credentials: true,
-      sameSite: 'None',
-    });
-    return res.status(200).json('login success');
-
-    // const findUser = await User.findOne({ user_id: req.body.user_id });
-    // const match = await bcrypt.compare(
-    //   req.body.user_password,
-    //   findUser.user_password,
-    // );
-    // if (!findUser) return res.status(400).json('아이디를 잘못 입력했습니다.'); //회원 정보에서 유저 아이디가 없는 경우
-    // if (!match) return res.status(400).json('비밀번호를 잘못 입력했습니다.'); // body의 비밀번호와 회원정보 비밀번호가 일치하지 않는 경우
-    // if (findUser && match) {
   } catch (err) {
     console.log(err);
     return res.status(500).json('login failed');
@@ -369,6 +342,16 @@ const gitLogin = async (req, res) => {
     const gitFindUser = await User.findOne({
       user_id,
     });
+    const accessToken = jwt.sign(
+      {
+        user_id,
+      },
+      process.env.JWT_ACCESS_SECRET_KEY,
+      {
+        expiresIn: '10m',
+        issuer: 'server',
+      },
+    );
     if (!gitFindUser) {
       const user_password = generateRandomString(10);
       await User.create({
@@ -379,9 +362,28 @@ const gitLogin = async (req, res) => {
         tel: '010-1234-1232',
         bio: bio,
       });
-      return res.status(200).json('깃허브 로그인 성공');
+      const accessToken = jwt.sign(
+        {
+          user_id,
+        },
+        process.env.JWT_ACCESS_SECRET_KEY,
+        {
+          expiresIn: '10m',
+          issuer: 'server',
+        },
+      );
+
+      return res.status(200).json({
+        status: '200',
+        message: '로그인 성공',
+        accessToken,
+      });
     }
-    return res.status(200).json('회원가입 필요 없음 로그인 성공');
+    return res.status(200).json({
+      status: '200',
+      message: '로그인 성공',
+      accessToken,
+    });
   } catch (err) {
     console.log(err);
     return res.status(500).json('이상한 오류');
