@@ -38,9 +38,20 @@ const checkEmail = async (req, res) => {
 
 //검색결과 유저 리스트
 const searchUser = async (req, res) => {
+  if (!req.body.result) {
+    // 검색어가 없을 경우
+    return res.status(400).json({ message: '검색어가 비어있습니다.' });
+  }
+
+  if (typeof req.body.result !== 'string') {
+    // 검색어가 문자열이 아닐 경우
+    return res.status(400).json({ message: '검색어는 문자열이어야 합니다.' });
+  }
+
   const userList = await User.find({});
   const searchResult = userList.filter(
-    (list) => list.user_id.search(req.body.result) !== -1,
+    (list) =>
+      list.user_id.toLowerCase().search(req.body.result.toLowerCase()) !== -1,
   );
   res.status(200).json(searchResult);
 };
