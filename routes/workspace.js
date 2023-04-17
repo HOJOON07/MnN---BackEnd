@@ -10,6 +10,8 @@ const {
   updateRequestList,
   deleteRequestList,
 
+  updateAllWF,
+
   addInProgressList,
   updateInProgressList,
   deleteInProgressList,
@@ -35,6 +37,8 @@ router.post('/:id/addmember', inviteUser);
 router.post('/:id/deletews', deleteWS);
 
 //workspace-workflow
+router.post('/:id/updatewf', updateAllWF);
+
 //request list
 router.post('/:id/addrequestlist', addRequestList);
 router.post('/:id/:requestid/deleterequestlist', deleteRequestList);

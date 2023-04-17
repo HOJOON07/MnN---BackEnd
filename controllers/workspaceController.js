@@ -93,9 +93,16 @@ const updateAllWF = async (req, res) => {
     const selectWS = await WorkSpace.findOne({
       _id: ObjectId(req.params.id),
     });
-    await WorkSpace.updateOne({
-      _id: ObjectId(req.params.id),
-    });
+    await WorkSpace.updateOne(
+      {
+        _id: ObjectId(req.params.id),
+      },
+      {
+        $set: {
+          workflow: req.body.workflow,
+        },
+      },
+    );
     return res.status(200);
   } catch (err) {
     console.error(err);
@@ -596,6 +603,8 @@ module.exports = {
   selectWS,
   deleteWS,
   inviteUser,
+
+  updateAllWF,
 
   addRequestList,
   updateRequestList,
