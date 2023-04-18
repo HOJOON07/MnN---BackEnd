@@ -30,9 +30,9 @@ const checkEmail = async (req, res) => {
   }
   const findEmail = await User.findOne({ user_email: req.body.user_email });
   if (findEmail) {
-    return res.status(400).json('이미 가입된 이메일 주소 입니다.');
+    return res.status(200).json('이미 가입된 이메일 주소 입니다.');
   } else {
-    return res.status(200).json('사용 가능한 이메일 입니다.');
+    return res.status(201).json('사용 가능한 이메일 입니다.');
   }
   // res.status(500).json('올바른 형식이 아닙니다.');
 };
@@ -274,13 +274,13 @@ const kakaoLogin = async (req, res) => {
       );
 
       //토큰 전송
-      res.status(200).json({
+      console.log(res);
+      return res.status(200).json({
         status: '200',
         message: '로그인 성공',
         accessToken,
+        user_id: req.body.user_id,
       });
-
-      return res.status(200).json('login success');
     }
     const accessToken = jwt.sign(
       {
@@ -296,6 +296,7 @@ const kakaoLogin = async (req, res) => {
       status: '200',
       message: '로그인 성공',
       accessToken,
+      user_id: req.body.user_id,
     });
   } catch (err) {
     console.log(err);
@@ -392,12 +393,14 @@ const gitLogin = async (req, res) => {
         status: '200',
         message: '로그인 성공',
         accessToken,
+        user_id: req.body.user_id,
       });
     }
     return res.status(200).json({
       status: '200',
       message: '로그인 성공',
       accessToken,
+      user_id: req.body.user_id,
     });
   } catch (err) {
     console.log(err);
