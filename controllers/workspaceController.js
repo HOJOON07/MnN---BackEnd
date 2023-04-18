@@ -61,9 +61,8 @@ const getAllWS = async (req, res) => {
 
 const getMyWS = async (req, res) => {
   try {
-    const userid = '';
     const myWS = await WorkSpace.find({
-      member: { $all: ['qkrtjdwo5662'] },
+      member: { $all: [req.params.userid] },
     });
     return res.status(200).json(myWS);
   } catch (err) {
