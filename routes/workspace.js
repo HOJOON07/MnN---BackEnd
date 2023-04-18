@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const {
   createWS,
+  getMyWS,
   getAllWS,
   inviteUser,
   selectWS,
@@ -31,6 +32,7 @@ const {
 
 //workspace
 router.get('/', getAllWS);
+router.get('/myws', getMyWS);
 router.post('/addws', createWS);
 router.get('/:id', selectWS);
 router.post('/:id/addmember', inviteUser);
