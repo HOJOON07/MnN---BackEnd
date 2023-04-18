@@ -75,20 +75,22 @@ const searchUsers = async (req, res) => {
 //회원가입 컨트롤러
 const signUpUser = async (req, res) => {
   try {
-    const findUser = await User.findOne({ user_id: req.body.user_id });
     const { user_id, user_password, user_name, user_email, tel } = req.body;
+    const findUser = await User.findOne({ user_id: req.body.user_id });
     if (!findUser) {
-      const hashedPassword = await bcrypt.hash(user_password, 10);
+      const testPassword = await bcrypt.hash(user_password, 8);
       await User.create({
         user_id,
-        user_password: hashedPassword,
+        user_password: testPassword,
         user_name,
         user_email,
         tel,
       });
-      res.status(200).json('회원 가입 성공');
+      console.log(res);
+      return res.status(200).json('회원 가입 성공');
     } else {
-      res.status(400).json('이미 존재 하는 회원입니다.');
+      console.log(res);
+      return res.status(400).json('이미 존재 하는 회원입니다.');
     }
   } catch (err) {
     console.log(err);
@@ -151,6 +153,7 @@ const loginUser = async (req, res) => {
         status: '200',
         message: '로그인 성공',
         accessToken,
+        user_id: req.body.user_id,
       });
     }
   } catch (err) {
