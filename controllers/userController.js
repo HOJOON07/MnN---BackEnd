@@ -169,20 +169,22 @@ const loginUser = async (req, res) => {
 //인증을 위한것
 const accessTokenMiddleware = async (req, res, next) => {
   const ACCESTOKEN = req.body.token;
-  console.log(req.body);
+  console.log(req.body.token);
 
-  // if (ACCESTOKEN === undefined) {
-  //   return res.redirect('/plzlogin');
-  // }
-  try {
-    const accesVerify = jwt.verify(
-      ACCESTOKEN,
-      process.env.JWT_ACCESS_SECRET_KEY,
-    );
-    next();
-  } catch (err) {
-    res.redirect('/login');
+  if (ACCESTOKEN === undefined || ACCESTOKEN === null) {
+    console.log('!!');
+    return res.redirect('/plzlogin');
   }
+  console.log('바깥');
+  // try {
+  //   const accesVerify = jwt.verify(
+  //     ACCESTOKEN,
+  //     process.env.JWT_ACCESS_SECRET_KEY,
+  //   );
+  //   next();
+  // } catch (err) {
+  //   res.redirect('/plzlogin');
+  // }
 };
 //유효기간 연장
 const refreshToken = async (req, res, next) => {

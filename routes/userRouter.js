@@ -34,6 +34,6 @@ userRouter.post('/test', accessTokenMiddleware, test);
 userRouter.post('/checkid', checkID);
 userRouter.post('/checkemail', checkEmail);
 userRouter.post('/search', searchUser);
-userRouter.get('/userlist', accessTokenMiddleware, userList);
+userRouter.post('/userlist', userList);
 
 module.exports = userRouter;
