@@ -8,8 +8,10 @@ const crypto = require('crypto');
 // 토큰 인증 미들웨어
 
 const userList = async (req, res) => {
+  const MyInfo = await User.findOne({ user_id: req.body.user_id });
   const list = await User.find({});
-  res.status(200).json(list);
+  const notMyList = list.filter((el) => el.user_id !== MyInfo.user_id);
+  res.status(200).json(notMyList);
 };
 
 //중복된 아이디 컨트롤러
