@@ -11,6 +11,7 @@ const crypto = require('crypto');
 const checkID = async (req, res) => {
   if (!req.body.user_id) {
     // user_id 값이 없을 경우
+    console.log(res);
     return res.status(400).json({ message: 'user_id가 비어있습니다.' });
   }
 
