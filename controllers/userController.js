@@ -7,6 +7,11 @@ const crypto = require('crypto');
 
 // 토큰 인증 미들웨어
 
+const userList = async (req, res) => {
+  const list = await User.find({});
+  res.status(200).json(list);
+};
+
 //중복된 아이디 컨트롤러
 const checkID = async (req, res) => {
   if (!req.body.user_id) {
@@ -30,9 +35,9 @@ const checkEmail = async (req, res) => {
   }
   const findEmail = await User.findOne({ user_email: req.body.user_email });
   if (findEmail) {
-    return res.status(400).json('이미 가입된 이메일 주소 입니다.');
+    return res.status(200).json('이미 가입된 이메일 주소 입니다.');
   } else {
-    return res.status(200).json('사용 가능한 이메일 입니다.');
+    return res.status(201).json('사용 가능한 이메일 입니다.');
   }
   // res.status(500).json('올바른 형식이 아닙니다.');
 };
@@ -75,20 +80,22 @@ const searchUsers = async (req, res) => {
 //회원가입 컨트롤러
 const signUpUser = async (req, res) => {
   try {
-    const findUser = await User.findOne({ user_id: req.body.user_id });
     const { user_id, user_password, user_name, user_email, tel } = req.body;
+    const findUser = await User.findOne({ user_id: req.body.user_id });
     if (!findUser) {
-      const hashedPassword = await bcrypt.hash(user_password, 10);
+      const testPassword = await bcrypt.hash(user_password, 8);
       await User.create({
         user_id,
-        user_password: hashedPassword,
+        user_password: testPassword,
         user_name,
         user_email,
         tel,
       });
-      res.status(200).json('회원 가입 성공');
+      console.log(res);
+      return res.status(200).json('회원 가입 성공');
     } else {
-      res.status(400).json('이미 존재 하는 회원입니다.');
+      console.log(res);
+      return res.status(400).json('이미 존재 하는 회원입니다.');
     }
   } catch (err) {
     console.log(err);
@@ -151,6 +158,7 @@ const loginUser = async (req, res) => {
         status: '200',
         message: '로그인 성공',
         accessToken,
+        user_id: req.body.user_id,
       });
     }
   } catch (err) {
@@ -160,16 +168,23 @@ const loginUser = async (req, res) => {
 };
 //인증을 위한것
 const accessTokenMiddleware = async (req, res, next) => {
-  const ACCESTOKEN = req.header('accessToken');
-  try {
-    const accesVerify = jwt.verify(
-      ACCESTOKEN,
-      process.env.JWT_ACCESS_SECRET_KEY,
-    );
-    next();
-  } catch (err) {
-    res.redirect('/login');
+  const ACCESTOKEN = req.body.token;
+  console.log(req.body.token);
+
+  if (ACCESTOKEN === undefined || ACCESTOKEN === null) {
+    console.log('!!');
+    return res.redirect('/plzlogin');
   }
+  console.log('바깥');
+  // try {
+  //   const accesVerify = jwt.verify(
+  //     ACCESTOKEN,
+  //     process.env.JWT_ACCESS_SECRET_KEY,
+  //   );
+  //   next();
+  // } catch (err) {
+  //   res.redirect('/plzlogin');
+  // }
 };
 //유효기간 연장
 const refreshToken = async (req, res, next) => {
@@ -271,13 +286,13 @@ const kakaoLogin = async (req, res) => {
       );
 
       //토큰 전송
-      res.status(200).json({
+      console.log(res);
+      return res.status(200).json({
         status: '200',
         message: '로그인 성공',
         accessToken,
+        user_id: req.body.user_id,
       });
-
-      return res.status(200).json('login success');
     }
     const accessToken = jwt.sign(
       {
@@ -293,6 +308,7 @@ const kakaoLogin = async (req, res) => {
       status: '200',
       message: '로그인 성공',
       accessToken,
+      user_id: req.body.user_id,
     });
   } catch (err) {
     console.log(err);
@@ -389,12 +405,14 @@ const gitLogin = async (req, res) => {
         status: '200',
         message: '로그인 성공',
         accessToken,
+        user_id: req.body.user_id,
       });
     }
     return res.status(200).json({
       status: '200',
       message: '로그인 성공',
       accessToken,
+      user_id: req.body.user_id,
     });
   } catch (err) {
     console.log(err);
@@ -424,6 +442,7 @@ module.exports = {
   checkID,
   checkEmail,
   searchUser,
+  userList,
 };
 // kakao_account_email
 // const accessToken = async (req, res, next) => {

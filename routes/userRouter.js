@@ -16,6 +16,7 @@ const {
   checkID,
   checkEmail,
   searchUser,
+  userList,
 } = require('../controllers/userController');
 const user = require('../models/user');
 
@@ -33,5 +34,6 @@ userRouter.post('/test', accessTokenMiddleware, test);
 userRouter.post('/checkid', checkID);
 userRouter.post('/checkemail', checkEmail);
 userRouter.post('/search', searchUser);
+userRouter.post('/userlist', userList);
 
 module.exports = userRouter;
