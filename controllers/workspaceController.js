@@ -59,6 +59,18 @@ const getAllWS = async (req, res) => {
   }
 };
 
+const getMyWS = async (req, res) => {
+  try {
+    const myWS = await WorkSpace.find({
+      member: { $all: [req.params.userid] },
+    });
+    return res.status(200).json(myWS);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send(err.message);
+  }
+};
+
 const selectWS = async (req, res) => {
   try {
     const selectWS = await WorkSpace.findOne({
@@ -636,6 +648,7 @@ const deleteCompletedList = async (req, res) => {
 module.exports = {
   createWS,
   getAllWS,
+  getMyWS,
   selectWS,
   deleteWS,
   inviteUser,
