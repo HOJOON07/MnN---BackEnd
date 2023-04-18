@@ -7,6 +7,11 @@ const crypto = require('crypto');
 
 // 토큰 인증 미들웨어
 
+const userList = async (req, res) => {
+  const list = await User.find({});
+  res.status(200).json(list);
+};
+
 //중복된 아이디 컨트롤러
 const checkID = async (req, res) => {
   if (!req.body.user_id) {
@@ -163,7 +168,12 @@ const loginUser = async (req, res) => {
 };
 //인증을 위한것
 const accessTokenMiddleware = async (req, res, next) => {
-  const ACCESTOKEN = req.header('accessToken');
+  const ACCESTOKEN = req.body.token;
+  console.log(req.body);
+
+  // if (ACCESTOKEN === undefined) {
+  //   return res.redirect('/plzlogin');
+  // }
   try {
     const accesVerify = jwt.verify(
       ACCESTOKEN,
@@ -430,6 +440,7 @@ module.exports = {
   checkID,
   checkEmail,
   searchUser,
+  userList,
 };
 // kakao_account_email
 // const accessToken = async (req, res, next) => {
