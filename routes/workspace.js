@@ -32,7 +32,7 @@ const {
 
 //workspace
 router.get('/', getAllWS);
-router.get('/:userid', getMyWS);
+router.get('/:userid/workspace', getMyWS);
 router.post('/addws', createWS);
 router.get('/:id', selectWS);
 router.post('/:id/addmember', inviteUser);
