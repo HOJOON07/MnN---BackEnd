@@ -25,9 +25,8 @@ const userSchema = new Schema(
     },
     user_email: {
       type: String,
-      // required: true,
+      required: true,
       unique: true,
-      // match: /.+\@.+@..+/,
       trim: true,
     },
     tel: {
@@ -41,7 +40,7 @@ const userSchema = new Schema(
         'GameDeveloper',
         'FullStack',
         'App Developer',
-      ], // 수정해야함 .
+      ],
     },
     createAt: {
       type: Date,

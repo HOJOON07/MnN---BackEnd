@@ -33,6 +33,7 @@ const checkID = async (req, res) => {
 //중복된 이메일 컨트롤러
 const checkEmail = async (req, res) => {
   if (!req.body.user_email) {
+    // email값이 없을 경우
     return res.status(400).json({ message: 'user_email이 비어있습니다.' });
   }
   const findEmail = await User.findOne({ user_email: req.body.user_email });
@@ -85,10 +86,10 @@ const signUpUser = async (req, res) => {
     const { user_id, user_password, user_name, user_email, tel } = req.body;
     const findUser = await User.findOne({ user_id: req.body.user_id });
     if (!findUser) {
-      const testPassword = await bcrypt.hash(user_password, 8);
+      const hashPassword = await bcrypt.hash(user_password, 8);
       await User.create({
         user_id,
-        user_password: testPassword,
+        user_password: hashPassword,
         user_name,
         user_email,
         tel,
@@ -144,9 +145,7 @@ const loginUser = async (req, res) => {
       const accessToken = jwt.sign(
         {
           user_id: findUser.user_id,
-          // user_id: 'ghwns1007',
           user_name: findUser.user_name,
-          // user_name: '김호준',
         },
         process.env.JWT_ACCESS_SECRET_KEY,
         {
@@ -154,9 +153,7 @@ const loginUser = async (req, res) => {
           issuer: 'server',
         },
       );
-
-      // res.status(200).json('login sucess'); //유저아이디가 있고 비밀번호가 일치할 때
-      res.status(200).json({
+      return res.status(200).json({
         status: '200',
         message: '로그인 성공',
         accessToken,
@@ -365,6 +362,7 @@ const githubLogin = async (req, res) => {
   }
 };
 const gitLogin = async (req, res) => {
+  const user_email = `${generateRandomString(8)}@example.com`;
   try {
     const { user_id, bio, user_email, user_name } = req.body;
     console.log(req.body);
@@ -388,7 +386,7 @@ const gitLogin = async (req, res) => {
         user_id: user_id,
         user_password: user_password,
         user_name,
-        user_email,
+        user_email: user_email,
         tel: '010-1234-1232',
         bio: bio,
       });
