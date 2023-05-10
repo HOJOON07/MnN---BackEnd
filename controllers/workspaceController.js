@@ -62,7 +62,7 @@ const getAllWS = async (req, res) => {
 const getMyWS = async (req, res) => {
   try {
     const myWS = await WorkSpace.find({
-      member: { $all: [req.params.userid] },
+      member: { $all: [req.params.userid] }, //쿼리문으로 params에 들어오는 id 다 찾는다.
     });
     return res.status(200).json(myWS);
   } catch (err) {
@@ -203,7 +203,7 @@ const deleteRequestList = async (req, res) => {
     });
     const remainRequestList = selectWS.workflow.requestList.filter(
       (data) => data.id != req.params.requestid,
-    );
+    ); //삭제 이외에 것들은 남겨놔야 하고
     console.log(remainRequestList);
     await WorkSpace.updateOne(
       {
